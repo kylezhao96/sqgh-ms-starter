@@ -19,7 +19,7 @@
       </el-menu>
     </el-header>
     <el-main>
-      <todo-list></todo-list>
+      <todo-list :todoitems="todoitems"></todo-list>
     </el-main>
     <el-footer></el-footer>
   </el-container>
@@ -31,12 +31,26 @@ export default {
   name: "app",
   data(){
     return{
-        activeIndex:"1"
+        activeIndex:"1",
+        todoitems:[]
     }
   },
   components: {
     "todo-list": TodoList
-  }
+  },
+  mounted(){
+    var day = new Date().getDate()
+    if(this.$ls.get('tasksLoc')== undefined || this.$ls.get('today')!=day){
+      this.$http.get('/api/tasks/day='+day).then(res=>{
+        this.$ls.set('tasksyLoc',JSON.stringify(res['data']['items']))
+        this.$ls.set('today',day)
+        this.todoitems = res['data']['items']
+      }).catch(err=>{
+          this.$message.error(err)
+          })
+    }
+    this.todoitems = JSON.parse(this.$ls.get('tasksLoc'))
+  },
 };
 </script>
 

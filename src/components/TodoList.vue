@@ -20,6 +20,18 @@
               label="日期"
             ></el-input-number>
           </el-form-item>
+          <el-form-item label="时间">
+            <el-time-select
+              v-model="task.time"
+              value-format
+          :picker-options="{
+          start: '08:00',
+          step: '1:00',
+          end: '24:00'
+          }"
+           placeholder="选择时间">
+          </el-time-select>
+          </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button @click="dialogVisible = false">取 消</el-button>
@@ -28,25 +40,24 @@
       </el-dialog>
     </div>
     <el-timeline>
-      <el-timeline-item
+      <el-timeline-item  placement = 'top'
         v-for="(todoitem,index) in todoitems"
         :key="index"
-        :icon="todoitem.icon"
-        :type="todoitem.type"
-        :color="todoitem.color"
+        :timestamp="todoitem.time+':00'"
+        @click="sendTask(todoitem)"
       >
-        <todo-item :todoitem="todoitem"></todo-item>
+        <el-card shadow='hover'>
+          {{todoitem.name}}
+        </el-card>
       </el-timeline-item>
     </el-timeline>
   </el-card>
 </template>
 <script>
-import TodoItem from "./TodoItem";
 
 export default {
   name: "TodoList",
   components: {
-    "todo-item": TodoItem
   },
   data() {
     return {  
@@ -54,7 +65,8 @@ export default {
       task:{
         name:'',
         daily:false,
-        day:1
+        day:1,
+        time:''
       }
     };  
   },
@@ -64,22 +76,40 @@ export default {
     }
   },
   methods:{
-    addTask(){
-      if task.daily==true:
-
-      this.$http.post('localhost:5000/tasks', {
-    name: task.name,
-    day: task.
-  })
-  .then(function (response) {
-    console.log(response);
-  })
-  .catch(function (error) {
-    console.log(error);
-  });
-    }
-};
+     addTask(){
+      //  this.$alert(this.task,'查看task的值')
+      var task = this.task
+      if (task.daily == true){
+        task.day = 0
+      }
+      this.$http({
+        method:'post',
+        url:'/api/tasks',  
+        data:{
+          name:task.name,
+          day:task.day,
+          time:task.time
+        },
+      }).then(()=>{
+        this.$message({
+          message:'添加成功！',
+          type:'success'
+        });
+        
+      }).catch(err=>{
+        this.$message.error(err)
+      })
+      this.dialogVisible=false
+     },
+     sendTask(todoitem){ 
+          this.$message({
+            message:todoitem
+          })
+     }
+  }
+}
 </script> 
+
 <style scoped>
 .todo-card {
   height: 500rpx;
