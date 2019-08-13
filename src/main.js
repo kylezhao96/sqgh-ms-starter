@@ -8,11 +8,14 @@ Vue.config.productionTip = false
 import axios from 'axios'
 
 Vue.prototype.$http= axios
+// Vue.prototype.prefixInteger = function(num, n) {
+//   return (Array(n).join(0) + num).slice(-n);
+// }
 Vue.use(VueLocalStorage, {
   name: 'ls',
   bind: true //created computed members from your variable declarations
 })
-axios.defaults.baseURL = 'http://localhost:8081'
+axios.defaults.baseURL = 'http://localhost:8080'
 axios.defaults.headers.post['Content-Type'] = 'application/json';
 
 new Vue({
