@@ -1,10 +1,11 @@
 <template>
-  <el-card class="todo-item" :body-style="{padding :'0px'}">
-    <el-row>
-      <el-col :style="{padding : '20px'}" :span='22' @click.native="clickTask">{{name}}</el-col>
-      <el-col :style="{padding : '20px'}" :span='2'>
+  <el-card class="todo-item" :body-style="{padding :'0px', border:'0'}" shadow="hover">
+    <el-row :style="{padding : '15px'}">
+      <el-col  :span='2' @click.native="clickTask"><i class="el-icon-chat-line-square"></i></el-col>
+      <el-col  :span='20' >{{name}}</el-col>
+      <!-- <el-col :style="{padding : '20px'}" :span='2'>
         <el-button type='success' circle icon="el-icon-check" size='mini'></el-button>
-      </el-col>
+      </el-col> -->
 
 
     </el-row>
@@ -39,7 +40,7 @@
         //     time:this.time
         //   },
         // })
-        if (this.name == "发出力至诸城风电场") {
+        if (this.name == "发送出力") {
           this.$emit('itemEmit1', this.todoitem)
         }
       },

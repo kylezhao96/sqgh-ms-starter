@@ -66,12 +66,12 @@
 
       <!-- 标题 -->
       <el-row>
-        <el-col :span="2">
-          <el-badge :value="todoNum" class="item">今日待办</el-badge>
+        <el-col :span="6">
+          <el-badge :value="todoNum" class="item">{{listTitle}}</el-badge>
         </el-col>
-        <el-col :span="2">
+        <!-- <el-col :span="2">
           <el-button class='addbutton' @click="taskDialogVisible = true" icon="el-icon-plus" circle></el-button>
-        </el-col>
+        </el-col> -->
       </el-row>
     </div>
     <!-- todoitem -->
@@ -94,6 +94,7 @@
     },
     data() {
       return {
+        listTitle:'',
         taskDialogVisible: false,
         infoDialogVisible: false,
         todoitems: {},
@@ -107,16 +108,17 @@
         },
       };
     },
-    props: {},
+    props: ['title'],
     mounted() {
+      this.listTitle = this.title
       var day = new Date().getDate();
       // 缓存处理
       if (this.$ls.get("tasksLoc") == undefined || this.$ls.get("today") != day) {
         this.$http
-          .get("/api/tasks/day=" + day)
+          .get("/api/dailytasks")
           .then(res => {
             this.$ls.set("tasksyLoc", JSON.stringify(res["data"]["items"]));
-            this.$ls.set("today", day);
+            // this.$ls.set("today", day);
             this.todoitems = res["data"]["items"];
           })
           .catch(err => {

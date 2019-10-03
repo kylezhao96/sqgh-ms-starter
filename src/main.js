@@ -15,7 +15,7 @@ Vue.use(VueLocalStorage, {
   name: 'ls',
   bind: true //created computed members from your variable declarations
 })
-axios.defaults.baseURL = 'http://localhost:8080'
+axios.defaults.baseURL = 'http://localhost:8081'
 axios.defaults.headers.post['Content-Type'] = 'application/json';
 
 new Vue({

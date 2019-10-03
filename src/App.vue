@@ -8,35 +8,41 @@
         mode="horizontal"
       >
         <el-menu-item index="1">我的工作台</el-menu-item>
-        <el-submenu index="2" disabled>
-          <template slot="title">自动化功能</template>
-          <el-menu-item index="2-1">发送出力</el-menu-item>
-          <el-menu-item index="2-2">上报集团公司日报</el-menu-item>
-          <el-menu-item index="2-3">上报电网考核</el-menu-item>
-        </el-submenu>
-
+        <el-menu-item index="2" disabled>运行分析</el-menu-item>
         <el-menu-item index="3" disabled>备件管理</el-menu-item>
       </el-menu>
     </el-header>
     <el-main>
-      <todo-list></todo-list>
+      <el-row :gutter="20">
+        <el-col :span="12">
+            <dtask-list :title="title1"></dtask-list>
+        </el-col>
+        <el-col :span="12">
+            <mtask-list :title="title2"></mtask-list>
+        </el-col>
+      </el-row>
+      
     </el-main>
     <el-footer></el-footer>
   </el-container>
 </template>
 
 <script>
-import todoList from "./components/TodoList";
+import dtaskList from "./components/DtaskList";
+import mtaskList from "./components/MtaskList";
 // import TodoItem from "./components/TodoItem";
 export default {
   name: "app",
   data(){
     return{
         activeIndex:"1",
+        title1:"日常工作",
+        title2:"月度工作"
     }
   },
   components: {
-    "todo-list": todoList
+    "dtask-list": dtaskList,
+    "mtask-list": mtaskList
   },
 };
 </script>
