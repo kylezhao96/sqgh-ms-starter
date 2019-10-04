@@ -27,23 +27,24 @@
       this.name = this.todoitem.name
       this.hour = this.todoitem.hour
       this.minute = this.todoitem.minute
+      this.type = this.todoitem.type
     },
     props: ['todoitem'],
     methods: {
-      //  执行任务函数
-      clickTask() {
-        // this.$http({
-        //   method:'post',
-        //   url:'/api/dotask',  
-        //   data:{
-        //     name:this.name,
-        //     time:this.time
-        //   },
-        // })
-        if (this.name == "发送出力") {
-          this.$emit('itemEmit1', this.todoitem)
-        }
-      },
+        //  执行任务函数
+        clickTask() {
+          // this.$http({
+          //   method:'post',
+          //   url:'/api/dotask',  
+          //   data:{
+          //     name:this.name,
+          //     time:this.time
+          //   },
+          // })
+          if (this.type == "sendPower") {
+            this.$emit('itemEmit1', this.todoitem)
+          }
+        },
     }
   };
 </script>
