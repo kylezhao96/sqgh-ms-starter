@@ -26,43 +26,8 @@
                 <el-button type="primary" @click="addTask">确 定</el-button>
               </div>
             </el-dialog>
-      
-            <!-- 发送出力弹窗 -->
-            <el-dialog title="生产信息" :visible.sync='infoDialogVisible'>
-              <el-form :model="status" label-position="left" label-width="80px">
-                <el-form-item label="出力">
-                  <el-input v-model="status.power" placeholder="MW"></el-input>
-                </el-form-item>
-                <el-form-item label="风速">
-                  <el-input v-model="status.windspeed" placeholder="m/s"></el-input>
-                </el-form-item>
-                <el-form-item label="风向">
-                  <el-select v-model="status.windir" placeholder="北风" :maxlength="255">
-                    <el-option label="东风" value="东"></el-option>
-                    <el-option label="南风" value="南"></el-option>
-                    <el-option label="西风" value="西"></el-option>
-                    <el-option label="北风" value="北"></el-option>
-                    <el-option label="东南风" value="东南"></el-option>
-                    <el-option label="西南风" value="西南"></el-option>
-                    <el-option label="东北风" value="东北"></el-option>
-                    <el-option label="西北风" value="西北"></el-option>
-                  </el-select>
-                </el-form-item>
-                <el-form-item label="维护">
-                  <el-input-number v-model="status.num1" controls-position="right" :min="0" :max="40"></el-input-number>
-                </el-form-item>
-                <el-form-item label="故障">
-                  <el-input-number v-model="status.num2" controls-position="right" :min="0" :max="40"></el-input-number>
-                </el-form-item>
-                <el-form-item label="无通讯">
-                  <el-input-number v-model="status.num3" controls-position="right" :min="0" :max="40"></el-input-number>
-                </el-form-item>
-              </el-form>
-              <div slot="footer" class="dialog-footer">
-                <el-button @click="infoDialogVisible = false">取 消</el-button>
-                <el-button type="primary" @click="confirmStatus">确 定</el-button>
-              </div>
-            </el-dialog>
+            
+            <status-dialog  :shour="shour" :sdialogVisible.sync='sdialogVisible'></status-dialog>
       
             <!-- 标题 -->
             <el-row>
@@ -76,8 +41,17 @@
           </div>
           <!-- todoitem -->
           <div class="todoitem" v-for="(todoitem,index) in todoitems" :key="index" :style="{margin:'2px'}">
-            <todo-item :todoitem="todoitem" @itemEmit1="showInfoDialog"></todo-item>
-      
+            <!-- <todo-item :todoitem="todoitem" @itemEmit1="showInfoDialog"></todo-item> -->
+            <el-card class="todo-item" :body-style="{padding :'0px'}" shadow="hover" @click.native="clickTask(todoitem)">
+              <el-row :style="{padding : '15px'}">
+                <el-col  :span='2'><i class="el-icon-chat-line-square"></i></el-col>
+                <el-col  :span='20' >{{todoitem.name}}</el-col>
+                <!-- <el-col :style="{padding : '20px'}" :span='2'>
+                  <el-button type='success' circle icon="el-icon-check" size='mini'></el-button>
+                </el-col> --> 
+              </el-row>
+
+            </el-card>
       
           </div>
       
@@ -86,26 +60,20 @@
       </template>
       
       <script>
-        import todoItem from "./TodoItem";
+        import statusDialog from "./StatusDialog.vue"
         export default {
           name: "dtaskList",
           components: {
-            "todo-item": todoItem
+            "status-dialog": statusDialog
           },
           data() {
             return {
+              shour: '',
+              sdialogVisible : false,
               listTitle:'',
               taskDialogVisible: false,
-              infoDialogVisible: false,
               todoitems: {},
               task: {},
-              status: {
-                todoNum: 0,
-                num1: 0,
-                num2: 0,
-                num3: 0,
-                windir: '东风'
-              },
             };
           },
           props: ['title'],
@@ -173,97 +141,18 @@
                 });
               this.taskDialogVisible = false;
             },
-      
-            //与todoitem通信,这是典型的子父组件通信!!
-            showInfoDialog(info) {
-              this.infoDialogVisible = true
-              this.$message(info.name)
-              this.status.name = info.name
-              this.status.hour = info.hour
-              this.status.minute = info.minute
-            },
-      
-            //确认出力填写
-            confirmStatus() {
-              // if(this.status.windir == east){
-              //   this.
-              // }
-              this.$http({
-                method: "post",
-                url: "/api/dotask",
-                data: {
-                  hour: (Array(2).join(0) + this.status.hour).slice(-2),
-                  windspeed: this.status.windspeed,
-                  power: this.status.power,
-                  windir: this.status.windir,
-                  num1: this.status.num1,
-                  num2: this.status.num2,
-                  num3: this.status.num3
-                }
-              })
-                .then(res => {
-                  this.infoDialogVisible = false
-                  this.$notify({
-                    title: '已经复制到粘贴板',
-                    message: res['data'],
-                    type: 'success',
-                    // duration: 0,
-                    onClick: () => {
-                      this.fixInfo(res['data'])
-                    }
-                  });
-                })
-                .catch(err => {
-                  this.$message.error(err);
-                });
-            },
-      
-            // 修改文档
-            fixInfo(info) {
-              this.$prompt('请在下方修改', '修改出力', {
-                inputValue: info,
-                confirmButtonText: '确定',
-                cancelButtonText: '取消',
-                closeOnClickModal: false,
-                inputType: 'textarea'
-              }).then(({ value }) => {
-                this.$http({
-                  method: "post",
-                  url: "/api/fixclip",
-                  data: {
-                    info: value
-                  }
-                })
-                  .then(res => {
-                    this.$notify({
-                      title: '已经复制到粘贴板',
-                      message: res['data'],
-                      type: 'success',
-                      // duration: 0,
-                      onClick: () => {
-                        this.fixInfo(res['data'])
-                      }
-                    });
-      
-                  })
-                  .catch(err => {
-                    this.$message.error(err);
-                  });
-              }).catch(() => {
-                this.$message({
-                  type: 'info',
-                  message: '取消输入'
-                });
-              });
-      
-            }
+            
+            // 点击事件
+            clickTask(e) {
+              if (e.type == "sendPower") {
+                  this.shour = e.hour
+                  this.sdialogVisible = true
+              }
+             },  
           }
         };
       </script>
       
       <style scoped>
-        .todoitem{
-
-        }
       
       </style>

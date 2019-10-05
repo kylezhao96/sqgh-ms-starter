@@ -33,14 +33,6 @@
     methods: {
         //  执行任务函数
         clickTask() {
-          // this.$http({
-          //   method:'post',
-          //   url:'/api/dotask',  
-          //   data:{
-          //     name:this.name,
-          //     time:this.time
-          //   },
-          // })
           if (this.type == "sendPower") {
             this.$emit('itemEmit1', this.todoitem)
           }
