@@ -41,7 +41,7 @@
           </div>
           <!-- todoitem -->
           <div v-for="(todoitem,index) in todoitems" :key="index" :style="{margin:'10px'}">
-            <todo-item :todoitem="todoitem" @itemEmit1="showInfoDialog"></todo-item>
+
       
       
           </div>
@@ -51,11 +51,10 @@
       </template>
       
       <script>
-        import todoItem from "./TodoItem";
         export default {
           name: "mtaskList",
           components: {
-            "todo-item": todoItem
+
           },
           data() {
             return {
@@ -138,17 +137,7 @@
                 });
               this.taskDialogVisible = false;
             },
-      
-            //与todoitem通信,这是典型的子父组件通信!!
-            showInfoDialog(info) {
-              this.infoDialogVisible = true
-              this.$message(info.name)
-              this.status.name = info.name
-              this.status.hour = info.hour
-              this.status.minute = info.minute
-            },
-          
-    
+
           }
         };
       </script>
