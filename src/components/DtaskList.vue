@@ -1,9 +1,8 @@
 <template>
   <el-card id="todo-list" class="todo-card">
     <div slot="header" class="todo-headedr">
-
       <status-dialog :shour="shour" :sdialogVisible='sdialogVisible' @changeSdv='changeSdv'></status-dialog>
-      <calform-dialog></calform-dialog>
+      <calform-dialog :cdialogVisible ='cdialogVisible' @changeCdv='changeCdv'></calform-dialog>
       <!-- 标题 -->
       <el-row>
         <el-col :span="6">
@@ -47,6 +46,7 @@
       return {
         shour: '',
         sdialogVisible: false,
+        cdialogVisible: false,
         listTitle: '',
         taskDialogVisible: false,
         todoitems: {},
@@ -125,10 +125,17 @@
           this.shour = e.hour
           this.sdialogVisible = true
         }
+        if(e.name == '表码值录入'){
+          this.cdialogVisible = true
+        }
       },
       // sdialog发生状态改变时传值
       changeSdv(e) {
         this.sdialogVisible = e
+      },
+      // cdialog状态传递
+      changeCdv(e){
+        this.cdialogVisible =e
       }
     }
   };

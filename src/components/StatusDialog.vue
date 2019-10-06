@@ -1,6 +1,6 @@
 <template>
     <!-- 发送出力弹窗 -->
-    <el-dialog title="生产信息" :visible.sync=" sdialogVisible ">
+    <el-dialog title="生产信息" :visible.sync=" sdialogVisible " :before-close="shutDialog">
         <el-form :model="status" label-position="left" label-width="80px">
             <el-form-item label="出力">
                 <el-input v-model="status.power" placeholder="MW"></el-input>
