@@ -88,42 +88,14 @@
       ></el-button>
     </div>
     <!-- 主体 -->
-    <!-- <el-table
-    :data="tableData"
-    style="width: 100%">
-    <el-table-column
-      label="设备"
-      width="180">
-      <template slot-scope="scope">
-        
-        <span style="margin-left: 10px">{{ scope.row.date }}</span>
-      </template>
-    </el-table-column>
-    <el-table-column
-      label="姓名"
-      width="180">
-      <template slot-scope="scope">
-        <el-popover trigger="hover" placement="top">
-          <p>姓名: {{ scope.row.name }}</p>
-          <p>住址: {{ scope.row.address }}</p>
-          <div slot="reference" class="name-wrapper">
-            <el-tag size="medium">{{ scope.row.name }}</el-tag>
-          </div>
-        </el-popover>
-      </template>
-    </el-table-column>
-    <el-table-column label="操作">
-      <template slot-scope="scope">
-        <el-button
-          size="mini"
-          @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-        <el-button
-          size="mini"
-          type="danger"
-          @click="handleDelete(scope.$index, scope.row)">删除</el-button>
-      </template>
-    </el-table-column>
-    </el-table>-->
+    <el-table :data="wtmData" style="width: 100%">
+      <el-table-column prop="id" label="风机号">
+      </el-table-column>
+      <el-table-column label="工作负责人" prop="manager"></el-table-column>
+      <el-table-column label="工作任务" prop="task"></el-table-column>
+      <el-table-column label="工作班成员" prop="members"></el-table-column>
+      <el-table-column label="许可时间" prop="allow_time"></el-table-column>
+    </el-table>
   </el-card>
 </template>
 
@@ -141,13 +113,15 @@ export default {
       managers: [],
       value: [],
       wts: [],
-      tasks: []
+      tasks: [],
+      wtmData:[]
     };
   },
   props: [],
   mounted() {
     this.loadWts();
     this.loadManagers();
+    this.loadWtms();
   },
   methods: {
     querySearch(queryString, cb) {
@@ -194,6 +168,16 @@ export default {
         .get("/api/getusers")
         .then(res => {
           this.managers = res["data"];
+        })
+        .catch(err => {
+          this.$message.error(err);
+        });
+    },
+    loadWtms(){
+       this.$http
+        .get("/api/getwtms")
+        .then(res => {
+          this.wtmData = res["data"];
         })
         .catch(err => {
           this.$message.error(err);
