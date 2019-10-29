@@ -142,5 +142,7 @@
 </script>
 
 <style scoped>
-
+.todo-card{
+  margin-bottom: 20px
+}
 </style>
