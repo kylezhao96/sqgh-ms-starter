@@ -1,7 +1,11 @@
 <template>
   <el-card>
     <!-- 创建记录弹窗 -->
-    <el-dialog title="风机维护/检修记录" :visible.sync="sdialogVisible" :before-close="shutDialog">
+    <el-dialog :visible.sync="sdialogVisible" :before-close="shutDialog">
+      <div slot="title" class="dialog-title">
+        <span>风机维护/检修记录</span>
+        
+      </div>
       <el-form :model="wtForm">
         <el-row>
           <el-form-item>
@@ -33,7 +37,28 @@
               </el-select>
             </el-col>
           </el-form-item>
-
+          <el-form-item>
+            <el-col :span="8">
+              <span>工作班成员：</span>
+            </el-col>
+            <el-col :span="16">
+              <el-select
+                v-model="wtForm.members"
+                multiple
+                filterable
+                allow-create
+                :remote-method="searchMembers"
+                placeholder="工作班成员"
+              >
+                <el-option
+                  v-for="item in managers"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                ></el-option>
+              </el-select>
+            </el-col>
+          </el-form-item>
           <el-form-item>
             <el-col :span="8">
               <span>工作类型</span>
@@ -70,6 +95,22 @@
               ></el-autocomplete>
             </el-col>
           </el-form-item>
+          <el-form-item>
+            <el-col :span="8">
+              <span>许可时间：</span>
+            </el-col>
+            <el-col :span="16">
+              <div class="block">
+                <el-date-picker
+                  v-model="wtForm.allow_time"
+                  type="datetime"
+                  placeholder="选择许可时间"
+                  default-time="8:00:00"
+                  value-format="timestamp"
+                ></el-date-picker>
+              </div>
+            </el-col>
+          </el-form-item>
         </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -89,12 +130,40 @@
     </div>
     <!-- 主体 -->
     <el-table :data="wtmData" style="width: 100%">
-      <el-table-column prop="id" label="风机号">
+      <el-table-column type="expand">
+        <template slot-scope="props">
+          <el-form label-position="left" inline class="demo-table-expand">
+            <el-form-item label="风机号">
+              <span>{{ props.row.wt_id }}</span>
+            </el-form-item>
+            <el-form-item label="工作内容">
+              <span>{{ props.row.task }}</span>
+            </el-form-item>
+            <el-form-item label="工作负责人">
+              <span>{{ props.row.manager }}</span>
+            </el-form-item>
+            <el-form-item label="工作班成员">
+              <span>{{ props.row.members }}</span>
+            </el-form-item>
+            <el-form-item label="许可时间">
+              <span>{{ props.row.allow_time }}</span>
+            </el-form-item>
+          </el-form>
+        </template>
       </el-table-column>
-      <el-table-column label="工作负责人" prop="manager"></el-table-column>
+      <el-table-column label="风机号">
+        <template slot-scope="scope">
+          <span>A{{ scope.row.wt_id }}风机</span>
+        </template>
+      </el-table-column>
       <el-table-column label="工作任务" prop="task"></el-table-column>
-      <el-table-column label="工作班成员" prop="members"></el-table-column>
-      <el-table-column label="许可时间" prop="allow_time"></el-table-column>
+      <el-table-column label="操作" width="250px">
+        <template slot-scope="scope">
+          <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+          <el-button size="mini" type="primary" @click="handleEnd(scope.$index, scope.row)">终结</el-button>
+          <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+        </template>
+      </el-table-column>
     </el-table>
   </el-card>
 </template>
@@ -114,7 +183,8 @@ export default {
       value: [],
       wts: [],
       tasks: [],
-      wtmData:[]
+      wtmData: [],
+      gzp_address:[]
     };
   },
   props: [],
@@ -173,8 +243,8 @@ export default {
           this.$message.error(err);
         });
     },
-    loadWtms(){
-       this.$http
+    loadWtms() {
+      this.$http
         .get("/api/getwtms")
         .then(res => {
           this.wtmData = res["data"];
@@ -199,10 +269,75 @@ export default {
         .catch(err => {
           this.$message.error(err);
         });
-    }
+    },
+    searchMembers(query) {
+      if (query !== "") {
+        this.$http
+          .get("/api/getusers")
+          .then(res => {
+            this.members = res["data"];
+          })
+          .catch(err => {
+            this.$message.error(err);
+          });
+      } else {
+        this.options = [];
+      }
+    },
+    handleDelete(index, row) {
+      this.$confirm("此操作将永久删除该记录, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          this.$http({
+            method: "post",
+            url: "/api/deletewtm",
+            data: row.id
+          })
+            .then(res => {
+              if (res["data"] == "ok") {
+                this.wtmData.splice(index, 1);
+              } else {
+                this.$message({
+                  message: res["data"],
+                  type: "danger"
+                });
+              }
+            })
+            .catch(err => {
+              this.$message.error(err);
+            });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除"
+          });
+        });
+    },
+    handlePreview(file) {
+        this.$message({
+          message: file,
+          type: 'info'
+        });
+      }
   }
 };
 </script>
 
-<style scoped>
+<style>
+.demo-table-expand {
+  font-size: 0;
+}
+.demo-table-expand label {
+  width: 100px;
+  color: #99a9bf;
+}
+.demo-table-expand .el-form-item {
+  margin-right: 0;
+  margin-bottom: 0;
+  width: 80%;
+}
 </style>

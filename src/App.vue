@@ -13,7 +13,7 @@
           <dtask-list :title="title1"></dtask-list>
           <mtask-list :title="title2"></mtask-list>
         </el-col>
-        <el-col :xs="24" :sm="18" :md="14" :lg="8" :xl="6">
+        <el-col :xs="24" :sm="18" :md="14" :lg="10" :xl="10">
           <wtm-list></wtm-list>
         </el-col>
       </el-row>
