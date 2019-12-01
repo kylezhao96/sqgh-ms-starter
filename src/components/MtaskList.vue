@@ -41,9 +41,7 @@
           </div>
           <!-- todoitem -->
           <div v-for="(todoitem,index) in todoitems" :key="index" :style="{margin:'10px'}">
-
-      
-      
+          
           </div>
       
       

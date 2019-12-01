@@ -3,8 +3,16 @@
     <!-- 创建记录弹窗 -->
     <el-dialog :visible.sync="sdialogVisible" :before-close="shutDialog">
       <div slot="title" class="dialog-title">
-        <span>风机维护/检修记录</span>
-        
+        <el-row type='flex' justify='space-between'>
+          <el-col span='6'><span>风机维护/检修记录</span></el-col>
+          <el-col span='10 '>
+            <el-upload class="upload-demo" action="/api/loadgzp" :on-preview="handlePreview" :on-remove="handleRemove"
+              :before-remove="beforeRemove" multiple :limit="1" :on-exceed="handleExceed" :file-list="fileList">
+              <el-button size="small" type="primary">点击上传</el-button>
+            </el-upload>
+          </el-col>
+        </el-row>
+
       </div>
       <el-form :model="wtForm">
         <el-row>
@@ -21,19 +29,9 @@
               <span>工作负责人：</span>
             </el-col>
             <el-col :span="16">
-              <el-select
-                v-model="wtForm.manager"
-                filterable
-                allow-create
-                default-first-option
-                placeholder="请选择工作负责人"
-              >
-                <el-option
-                  v-for="item in managers"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                ></el-option>
+              <el-select v-model="wtForm.manager" filterable allow-create default-first-option placeholder="请选择工作负责人">
+                <el-option v-for="item in managers" :key="item.value" :label="item.label" :value="item.value">
+                </el-option>
               </el-select>
             </el-col>
           </el-form-item>
@@ -42,20 +40,10 @@
               <span>工作班成员：</span>
             </el-col>
             <el-col :span="16">
-              <el-select
-                v-model="wtForm.members"
-                multiple
-                filterable
-                allow-create
-                :remote-method="searchMembers"
-                placeholder="工作班成员"
-              >
-                <el-option
-                  v-for="item in managers"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                ></el-option>
+              <el-select v-model="wtForm.members" multiple filterable allow-create :remote-method="searchMembers"
+                placeholder="工作班成员">
+                <el-option v-for="item in managers" :key="item.value" :label="item.label" :value="item.value">
+                </el-option>
               </el-select>
             </el-col>
           </el-form-item>
@@ -86,13 +74,8 @@
               <span>工作内容：</span>
             </el-col>
             <el-col :span="16">
-              <el-autocomplete
-                v-model="wtForm.task"
-                :fetch-suggestions="querySearch"
-                placeholder="请输入内容"
-                @select="handleSelect"
-                @focus="handleFocus"
-              ></el-autocomplete>
+              <el-autocomplete v-model="wtForm.task" :fetch-suggestions="querySearch" placeholder="请输入内容"
+                @select="handleSelect" @focus="handleFocus"></el-autocomplete>
             </el-col>
           </el-form-item>
           <el-form-item>
@@ -101,13 +84,8 @@
             </el-col>
             <el-col :span="16">
               <div class="block">
-                <el-date-picker
-                  v-model="wtForm.allow_time"
-                  type="datetime"
-                  placeholder="选择许可时间"
-                  default-time="8:00:00"
-                  value-format="timestamp"
-                ></el-date-picker>
+                <el-date-picker v-model="wtForm.allow_time" type="datetime" placeholder="选择许可时间" default-time="8:00:00"
+                  value-format="timestamp"></el-date-picker>
               </div>
             </el-col>
           </el-form-item>
@@ -120,13 +98,8 @@
     </el-dialog>
     <div slot="header" class="wtm-headedr">
       <span>风机维护</span>
-      <el-button
-        style="float: right; padding: 3px 3px"
-        type="primary"
-        icon="el-icon-plus"
-        circle
-        @click="sdialogVisible = true"
-      ></el-button>
+      <el-button style="float: right; padding: 3px 3px" type="primary" icon="el-icon-plus" circle
+        @click="sdialogVisible = true"></el-button>
     </div>
     <!-- 主体 -->
     <el-table :data="wtmData" style="width: 100%">
@@ -169,175 +142,184 @@
 </template>
 
 <script>
-export default {
-  name: "wtmList",
-  components: {},
-  data() {
-    return {
-      sdialogVisible: false,
-      wtForm: {
-        mode: "维护",
-        type: "其他"
-      },
-      managers: [],
-      value: [],
-      wts: [],
-      tasks: [],
-      wtmData: [],
-      gzp_address:[]
-    };
-  },
-  props: [],
-  mounted() {
-    this.loadWts();
-    this.loadManagers();
-    this.loadWtms();
-  },
-  methods: {
-    querySearch(queryString, cb) {
-      var tasks = this.tasks;
-      var results = queryString
-        ? tasks.filter(this.createFilter(queryString))
-        : tasks;
-      // 调用 callback 返回建议列表的数据
-      cb(results);
-    },
-    createFilter(queryString) {
-      return tasks => {
-        return (
-          tasks.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0
-        );
+  export default {
+    name: "wtmList",
+    components: {},
+    data() {
+      return {
+        sdialogVisible: false,
+        wtForm: {
+          mode: "维护",
+          type: "其他"
+        },
+        managers: [],
+        value: [],
+        wts: [],
+        tasks: [],
+        wtmData: [],
+        gzp_address: []
       };
     },
-    loadTasks() {
-      this.$http
-        .get("/api/getwttasks")
-        .then(res => {
-          this.tasks = res["data"];
-        })
-        .catch(err => {
-          this.$message.error(err);
-        });
+    props: [],
+    mounted() {
+      this.loadWts();
+      this.loadManagers();
+      this.loadWtms();
     },
-    handleSelect() {},
-    handleFocus() {
-      this.loadTasks();
-    },
-    loadWts() {
-      this.$http
-        .get("/api/getwts")
-        .then(res => {
-          this.wts = res["data"];
-        })
-        .catch(err => {
-          this.$message.error(err);
-        });
-    },
-    loadManagers() {
-      this.$http
-        .get("/api/getusers")
-        .then(res => {
-          this.managers = res["data"];
-        })
-        .catch(err => {
-          this.$message.error(err);
-        });
-    },
-    loadWtms() {
-      this.$http
-        .get("/api/getwtms")
-        .then(res => {
-          this.wtmData = res["data"];
-        })
-        .catch(err => {
-          this.$message.error(err);
-        });
-    },
-    sendWTM() {
-      this.$http({
-        method: "post",
-        url: "/api/createwtm",
-        data: this.wtForm
-      })
-        .then(res => {
-          this.sdialogVisible = false;
-          this.$message({
-            message: res,
-            type: "info"
-          });
-        })
-        .catch(err => {
-          this.$message.error(err);
-        });
-    },
-    searchMembers(query) {
-      if (query !== "") {
+    methods: {
+      querySearch(queryString, cb) {
+        var tasks = this.tasks;
+        var results = queryString
+          ? tasks.filter(this.createFilter(queryString))
+          : tasks;
+        // 调用 callback 返回建议列表的数据
+        cb(results);
+      },
+      createFilter(queryString) {
+        return tasks => {
+          return (
+            tasks.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0
+          );
+        };
+      },
+      loadTasks() {
+        //从数据库中获取创建过的所有任务
         this.$http
-          .get("/api/getusers")
+          .get("/api/getwttasks")
           .then(res => {
-            this.members = res["data"];
+            this.tasks = res["data"];
           })
           .catch(err => {
             this.$message.error(err);
           });
-      } else {
-        this.options = [];
-      }
-    },
-    handleDelete(index, row) {
-      this.$confirm("此操作将永久删除该记录, 是否继续?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
-      })
-        .then(() => {
-          this.$http({
-            method: "post",
-            url: "/api/deletewtm",
-            data: row.id
+      },
+      handleSelect() { },//处理选择，待做
+      handleFocus() {
+        this.loadTasks(); //
+      },
+      loadWts() {
+        //获取所有的风机号
+        this.$http
+          .get("/api/getwts")
+          .then(res => {
+            this.wts = res["data"];
           })
+          .catch(err => {
+            this.$message.error(err);
+          });
+      },
+      loadManagers() {
+        //加载工作负责人
+        this.$http
+          .get("/api/getusers")
+          .then(res => {
+            this.managers = res["data"];
+          })
+          .catch(err => {
+            this.$message.error(err);
+          });
+      },
+      loadWtms() {
+        //获取所有存在的任务，未加只显示未终结任务功能
+        this.$http
+          .get("/api/getwtms")
+          .then(res => {
+            this.wtmData = res["data"];
+          })
+          .catch(err => {
+            this.$message.error(err);
+          });
+      },
+      sendWTM() {
+        //发送表单，创建任务
+        this.$http({
+          method: "post",
+          url: "/api/createwtm",
+          data: this.wtForm
+        })
+          .then(() => {
+            this.sdialogVisible = false;
+            // this.$message({
+            //   message: res,
+            //   type: "info"
+            // });
+            this.loadWtms()
+
+          })
+          .catch(err => {
+            this.$message.error(err);
+          });
+      },
+      searchMembers(query) {
+        if (query !== "") {
+          this.$http
+            .get("/api/getusers")
             .then(res => {
-              if (res["data"] == "ok") {
-                this.wtmData.splice(index, 1);
-              } else {
-                this.$message({
-                  message: res["data"],
-                  type: "danger"
-                });
-              }
+              this.members = res["data"];
             })
             .catch(err => {
               this.$message.error(err);
             });
+        } else {
+          this.options = [];
+        }
+      },
+      handleDelete(index, row) {
+        this.$confirm("此操作将永久删除该记录, 是否继续?", "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
         })
-        .catch(() => {
-          this.$message({
-            type: "info",
-            message: "已取消删除"
+          .then(() => {
+            this.$http({
+              method: "post",
+              url: "/api/deletewtm",
+              data: row.id
+            })
+              .then(res => {
+                if (res["data"] == "ok") {
+                  this.wtmData.splice(index, 1);
+                } else {
+                  this.$message({
+                    message: res["data"],
+                    type: "danger"
+                  });
+                }
+              })
+              .catch(err => {
+                this.$message.error(err);
+              });
+          })
+          .catch(() => {
+            this.$message({
+              type: "info",
+              message: "已取消删除"
+            });
           });
-        });
-    },
-    handlePreview(file) {
+      },
+      handlePreview(file) {
         this.$message({
           message: file,
           type: 'info'
         });
       }
-  }
-};
+    }
+  };
 </script>
 
 <style>
-.demo-table-expand {
-  font-size: 0;
-}
-.demo-table-expand label {
-  width: 100px;
-  color: #99a9bf;
-}
-.demo-table-expand .el-form-item {
-  margin-right: 0;
-  margin-bottom: 0;
-  width: 80%;
-}
+  .demo-table-expand {
+    font-size: 0;
+  }
+
+  .demo-table-expand label {
+    width: 100px;
+    color: #99a9bf;
+  }
+
+  .demo-table-expand .el-form-item {
+    margin-right: 0;
+    margin-bottom: 0;
+    width: 80%;
+  }
 </style>
