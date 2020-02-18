@@ -1,166 +1,175 @@
 <template>
-  <el-card>
-    <!-- 创建记录弹窗 -->
-    <el-dialog :visible.sync="sdialogVisible" :before-close="shutDialog">
-      <div slot="title" class="dialog-title">
-        <span>风机维护/检修记录</span>
-        
-      </div>
-      <el-form :model="wtForm">
-        <el-row>
-          <el-form-item>
-            <el-col :span="8">
-              <span>风机：</span>
-            </el-col>
-            <el-col :span="16">
-              <el-cascader v-model="wtForm.wt" :options="wts" @change="handleChange"></el-cascader>
-            </el-col>
-          </el-form-item>
-          <el-form-item>
-            <el-col :span="8">
-              <span>工作负责人：</span>
-            </el-col>
-            <el-col :span="16">
-              <el-select
-                v-model="wtForm.manager"
-                filterable
-                allow-create
-                default-first-option
-                placeholder="请选择工作负责人"
-              >
-                <el-option
-                  v-for="item in managers"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                ></el-option>
-              </el-select>
-            </el-col>
-          </el-form-item>
-          <el-form-item>
-            <el-col :span="8">
-              <span>工作班成员：</span>
-            </el-col>
-            <el-col :span="16">
-              <el-select
-                v-model="wtForm.members"
-                multiple
-                filterable
-                allow-create
-                :remote-method="searchMembers"
-                placeholder="工作班成员"
-              >
-                <el-option
-                  v-for="item in managers"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                ></el-option>
-              </el-select>
-            </el-col>
-          </el-form-item>
-          <el-form-item>
-            <el-col :span="8">
-              <span>工作类型</span>
-            </el-col>
-            <el-col :span="16">
-              <el-radio v-model="wtForm.mode" label="维护">维护</el-radio>
-              <el-radio v-model="wtForm.mode" label="检修">检修</el-radio>
-            </el-col>
-          </el-form-item>
-          <el-form-item>
-            <el-col :span="8">
-              <span>工作大类</span>
-            </el-col>
-            <el-col :span="16">
-              <el-radio v-model="wtForm.type" label="巡检">巡检</el-radio>
-              <el-radio v-model="wtForm.type" label="技改">技改</el-radio>
-              <el-radio v-model="wtForm.type" label="消缺">消缺</el-radio>
-              <el-radio v-model="wtForm.type" label="半年维护">半年维护</el-radio>
-              <el-radio v-model="wtForm.type" label="全年维护">全年维护</el-radio>
-              <el-radio v-model="wtForm.type" label="其他">其他</el-radio>
-            </el-col>
-          </el-form-item>
-          <el-form-item>
-            <el-col :span="8">
-              <span>工作内容：</span>
-            </el-col>
-            <el-col :span="16">
-              <el-autocomplete
-                v-model="wtForm.task"
-                :fetch-suggestions="querySearch"
-                placeholder="请输入内容"
-                @select="handleSelect"
-                @focus="handleFocus"
-              ></el-autocomplete>
-            </el-col>
-          </el-form-item>
-          <el-form-item>
-            <el-col :span="8">
-              <span>许可时间：</span>
-            </el-col>
-            <el-col :span="16">
-              <div class="block">
-                <el-date-picker
-                  v-model="wtForm.allow_time"
-                  type="datetime"
-                  placeholder="选择许可时间"
-                  default-time="8:00:00"
-                  value-format="timestamp"
-                ></el-date-picker>
+  <el-card v-loading="loading" style="margin-bottom:20px">
+    <!-- 编辑弹窗 -->
+    <el-dialog title="编辑"></el-dialog>
+    <!-- 终结弹窗 -->
+    <el-dialog title="终结" :visible.sync="endDialogVisible" :width="endDialogWidth" :close-on-click-modal='false'>
+      <!-- form -->
+      <el-form
+        :model="endDialogData"
+        ref="endDialogData"
+        label-width="auto"
+        v-if="formVisible"
+      > 
+        <el-row type="flex" justify="space-between">
+          <el-col
+            :span="endDialogItemSpan"
+            v-for="(wtm, index) in endDialogData.wtms"
+            :key="'wtm'+index"
+          >
+            <el-card shadow="never" body-style="padding:20px;" style="margin:10px">
+              <div slot="header" class="clearfix">
+                <span>A{{wtm.wt_id}} 风机</span>
               </div>
-            </el-col>
-          </el-form-item>
+              <el-form-item
+                label="停机时刻"
+                required="true"
+                :prop="'wtms['+index+'].stop_time'"
+                :rules="rules.stop_time"
+              >
+                <el-date-picker
+                  style="width:auto"
+                  value-format="yyyy-MM-dd HH:mm"
+                  v-model="wtm.stop_time"
+                  type="datetime"
+                  placeholder="选择停机时间"
+                ></el-date-picker>
+              </el-form-item>
+              <el-form-item
+                label="启机时刻"
+                required="true"
+                :prop="'wtms['+index+'].start_time'"
+                :rules="rules.start_time"
+              >
+                <el-date-picker
+                  style="width:auto"
+                  value-format="yyyy-MM-dd HH:mm"
+                  v-model="wtm.start_time"
+                  type="datetime"
+                  placeholder="选择启机时间"
+                ></el-date-picker>
+              </el-form-item>
+              <el-form-item
+                label="损失电量"
+                required="true"
+                :prop="'wtms['+index+'].lost_power'"
+                :rules="rules.lost_power"
+              >
+                <el-input v-model="wtm.lost_power" style="width:auto">
+                  <template slot="append">万KWh</template>
+                </el-input>
+              </el-form-item>
+            </el-card>
+          </el-col>
+        </el-row>
+        <el-row type="flex" justify="end" align="bottom">
+          <el-col :span="6 ">
+            <el-form-item style="margin:0">
+              <el-popconfirm
+                title="相关报表是否全部关闭？"
+                icon="el-icon-warning"
+                iconColor="#e8620d"
+                @onConfirm="onEndDialogSubmit('endDialogData')"
+              >
+                <el-button
+                  slot="reference"
+                  type="primary"
+                  style="float:right;margin:10px 10px 0 0 "
+                >保存</el-button>
+              </el-popconfirm>
+            </el-form-item>
+          </el-col>
         </el-row>
       </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="sdialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="sendWTM">确 定</el-button>
-      </div>
+      <!-- 写入过程显示 -->
+      <el-steps v-else :active="currentActive" simple finish-status="success">
+        <el-step :title="action+'数据库记录'" :icon="icon[0]"></el-step>
+        <el-step :title="action+'日报表记录'" :icon="icon[1]"></el-step>
+      </el-steps>
     </el-dialog>
+    <!-- 展示窗口 -->
     <div slot="header" class="wtm-headedr">
       <span>风机维护</span>
-      <el-button
+      <!-- <el-button
         style="float: right; padding: 3px 3px"
         type="primary"
         icon="el-icon-plus"
         circle
         @click="sdialogVisible = true"
-      ></el-button>
+      ></el-button>-->
+      <el-upload
+        action="/api/postgzp"
+        style="float: right"
+        :show-file-list="false"
+        limit="1"
+        :on-success="uploadSuccess"
+      >
+        <!-- <el-button size="small" type="primary">点击上传</el-button> -->
+        <el-button size="mini" type="primary" icon="el-icon-plus" circle></el-button>
+      </el-upload>
     </div>
     <!-- 主体 -->
     <el-table :data="wtmData" style="width: 100%">
       <el-table-column type="expand">
         <template slot-scope="props">
-          <el-form label-position="left" inline class="demo-table-expand">
-            <el-form-item label="风机号">
-              <span>{{ props.row.wt_id }}</span>
-            </el-form-item>
-            <el-form-item label="工作内容">
-              <span>{{ props.row.task }}</span>
-            </el-form-item>
-            <el-form-item label="工作负责人">
-              <span>{{ props.row.manager }}</span>
-            </el-form-item>
-            <el-form-item label="工作班成员">
-              <span>{{ props.row.members }}</span>
-            </el-form-item>
-            <el-form-item label="许可时间">
-              <span>{{ props.row.allow_time }}</span>
-            </el-form-item>
-          </el-form>
+          <el-row>
+            <el-col>
+              <el-form label-position="left" inline class="demo-table-expand">
+                <el-form-item label="工作票号">
+                  <span>{{ props.row.id }}</span>
+                </el-form-item>
+                <el-form-item label="工作负责人">
+                  <span>{{ props.row.manager }}</span>
+                </el-form-item>
+                <el-form-item label="工作班成员">
+                  <span>{{ props.row.members }}</span>
+                </el-form-item>
+                <el-form-item label="计划开始时间">
+                  <span>{{ props.row.pstart_time }}</span>
+                </el-form-item>
+                <el-form-item label="计划结束时间">
+                  <span>{{ props.row.pstop_time }}</span>
+                </el-form-item>
+              </el-form>
+            </el-col>
+          </el-row>
+          <el-row v-if="props.row.wtms">
+            <el-col v-for="wtm in props.row.wtms" :key="wtm.wt_id">
+              <el-form label-position="left" inline class="demo-table-expand" label-width="auto">
+                <el-form-item :label="'A'+wtm.wt_id+'停机时刻'">
+                  <span>{{wtm.stop_time }}</span>
+                </el-form-item>
+                <el-form-item :label="'A'+wtm.wt_id+'启机时刻'">
+                  <span>{{wtm.start_time }}</span>
+                </el-form-item>
+                <el-form-item :label="'A'+wtm.wt_id+'停机时间'">
+                  <span>{{wtm.time }}</span>
+                </el-form-item>
+                <el-form-item :label="'A'+wtm.wt_id+'损失电量'">
+                  <span>{{wtm.lost_power }}</span>
+                </el-form-item>
+              </el-form>
+            </el-col>
+          </el-row>
         </template>
       </el-table-column>
-      <el-table-column label="风机号">
+      <el-table-column label="风机号" prop="wt_id" width="auto"></el-table-column>
+      <el-table-column label="工作任务" prop="task" width="auto"></el-table-column>
+      <el-table-column label="操作" width="160px">
         <template slot-scope="scope">
-          <span>A{{ scope.row.wt_id }}风机</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="工作任务" prop="task"></el-table-column>
-      <el-table-column label="操作" width="250px">
-        <template slot-scope="scope">
-          <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-          <el-button size="mini" type="primary" @click="handleEnd(scope.$index, scope.row)">终结</el-button>
+          <!-- <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">编辑</el-button> -->
+          <!-- <el-button size="mini" type="primary" @click="handleAllow(scope.$index, scope.row)">许可</el-button> -->
+          <el-button
+            v-if="scope.row.is_end"
+            size="mini"
+            @click="handleEnd(scope.$index, scope.row)"
+          >编辑</el-button>
+          <el-button
+            v-else
+            size="mini"
+            type="primary"
+            @click="handleEnd(scope.$index, scope.row)"
+          >终结</el-button>
           <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
         </template>
       </el-table-column>
@@ -175,40 +184,49 @@ export default {
   data() {
     return {
       sdialogVisible: false,
-      wtForm: {
-        mode: "维护",
-        type: "其他"
-      },
+      endDialogVisible: false,
+      // wtForm: {
+      //   mode: "维护",
+      //   type: "其他"
+      // },
       managers: [],
       value: [],
       wts: [],
       tasks: [],
       wtmData: [],
-      gzp_address:[]
+      gzp_address: [],
+      endDialogData: {},
+      endDialogData_pre: {},
+      endDialogWidth: "1050px",
+      endDialogItemSpan: "8",
+      formVisible: true,
+      currentActive: 0,
+      icon: ["el-icon-help", "el-icon-help", "el-icon-help"],
+      rules: {
+        //表单规则校验
+        start_time: [
+          { required: true, message: "请输入启机时间", trigger: "blur" },
+          { required: true, message: "请输入启机时间", trigger: "change" }
+        ],
+        stop_time: [
+          { required: true, message: "请输入停机时间", trigger: "blur" },
+          { required: true, message: "请输入停机时间", trigger: "change" }
+        ],
+        lost_power: [
+          { required: true, message: "请输入损失电量", trigger: "blur" },
+          { required: true, message: "请输入损失电量", trigger: "change" }
+        ]
+      },
+      loading: false,
+      action: ""
     };
   },
+  computed: {},
   props: [],
   mounted() {
-    this.loadWts();
-    this.loadManagers();
-    this.loadWtms();
+    this.loadGzps();
   },
   methods: {
-    querySearch(queryString, cb) {
-      var tasks = this.tasks;
-      var results = queryString
-        ? tasks.filter(this.createFilter(queryString))
-        : tasks;
-      // 调用 callback 返回建议列表的数据
-      cb(results);
-    },
-    createFilter(queryString) {
-      return tasks => {
-        return (
-          tasks.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0
-        );
-      };
-    },
     loadTasks() {
       this.$http
         .get("/api/getwttasks")
@@ -219,35 +237,13 @@ export default {
           this.$message.error(err);
         });
     },
-    handleSelect() {},
-    handleFocus() {
-      this.loadTasks();
-    },
-    loadWts() {
+    loadGzps() {
+      this.loading = true;
       this.$http
-        .get("/api/getwts")
-        .then(res => {
-          this.wts = res["data"];
-        })
-        .catch(err => {
-          this.$message.error(err);
-        });
-    },
-    loadManagers() {
-      this.$http
-        .get("/api/getusers")
-        .then(res => {
-          this.managers = res["data"];
-        })
-        .catch(err => {
-          this.$message.error(err);
-        });
-    },
-    loadWtms() {
-      this.$http
-        .get("/api/getwtms")
+        .get("/api/getgzps")
         .then(res => {
           this.wtmData = res["data"];
+          this.loading = false;
         })
         .catch(err => {
           this.$message.error(err);
@@ -291,24 +287,7 @@ export default {
         type: "warning"
       })
         .then(() => {
-          this.$http({
-            method: "post",
-            url: "/api/deletewtm",
-            data: row.id
-          })
-            .then(res => {
-              if (res["data"] == "ok") {
-                this.wtmData.splice(index, 1);
-              } else {
-                this.$message({
-                  message: res["data"],
-                  type: "danger"
-                });
-              }
-            })
-            .catch(err => {
-              this.$message.error(err);
-            });
+          this.deleteAction(row);
         })
         .catch(() => {
           this.$message({
@@ -317,12 +296,162 @@ export default {
           });
         });
     },
-    handlePreview(file) {
-        this.$message({
-          message: file,
-          type: 'info'
+    deleteAction(row) {
+      this.icon[this.currentActive] = "el-icon-loading";
+      // step1 校验+写入数据库
+      if (this.currentActive == 0) {
+        this.formVisible = false;
+        this.endDialogWidth = "700px";
+        this.action = "删除";
+        this.endDialogVisible = true;
+        this.$http({
+          method: "post",
+          url: "/api/delgzpdb",
+          data: row
+        })
+          .then(res => {
+            if (res.status == 200) {
+              this.currentActive++;
+              if (row.is_end) {
+                this.deleteAction(row);
+              } else {
+                this.$message("日报表中无纪录！");
+                this.init()
+              }
+            } else {
+              this.$message.error("发生未知错误！");
+            }
+          })
+          .catch(err => {
+            this.$message.error(err);
+          });
+      }
+      if (this.currentActive == 1) {
+        this.$http({
+          method: "post",
+          url: "/api/delgzpcdf",
+          data: row
+        })
+          .then(res => {
+            if (res.status == 200) {
+              this.$message("删除成功！");
+            } else {
+              this.$message.error("日报表中未找到该记录，请手动删除！");
+            }
+            this.init()
+          })
+          .catch(err => {
+            this.$message.error(err);
+          });
+      }
+    },
+    handleEnd(index, row) {
+      // this.$message(index + row);
+      this.endDialogData_pre = JSON.parse(JSON.stringify(row));
+      var num_wtms = row.wtms.length;
+      if (num_wtms <= 3) {
+        this.endDialogWidth = String(350 * num_wtms) + "px";
+        this.endDialogItemSpan = String(24 / num_wtms);
+      }
+      if (row.is_end) {
+        this.action = "修改";
+      } else {
+        this.action = "写入";
+      }
+      this.endDialogVisible = true;
+      this.endDialogData = JSON.parse(JSON.stringify(row));
+    },
+    // 终结弹窗提交事件
+    onEndDialogSubmit(form) {
+      this.icon[this.currentActive] = "el-icon-loading";
+      // step1 校验+写入数据库
+      if (this.currentActive == 0) {
+        this.$refs[form].validate(valid => {
+          if (valid) {
+            this.formVisible = false;
+            this.endDialogWidth = "700px";
+            this.$http({
+              method: "post",
+              url: "/api/wtmstodb",
+              data: this.endDialogData
+            }).then(() => {
+              this.currentActive++;
+              this.onEndDialogSubmit(this.endDialogData);
+            });
+          } else {
+            return false;
+          }
         });
       }
+      // step2 写入cdf
+      if (this.currentActive == 1) {
+        if (form.is_end) {
+          //终结修改
+          this.$http({
+            method: "post",
+            url: "/api/changecdf",
+            data: { new: form, old: this.endDialogData_pre }
+          })
+            .then(res => {
+              this.currentActive++;
+              this.init()
+              if (res["data"]) {
+                this.$message({
+                  type: "success",
+                  message: "日报表修改完成！"
+                });
+              } else {
+                this.$message({
+                  type: "warning",
+                  message: "由于未知原因日报表中未找到之前数据，请自行修改"
+                });
+              }
+            })
+            .catch(err => {
+              this.$message.error(err);
+            });
+        } else {
+          //未终结保存
+          this.$http({
+            method: "post",
+            url: "/api/wtmstocdf",
+            data: { gzp_id: form.id }
+          })
+            .then(() => {
+              this.currentActive++;
+              this.init()
+              this.$message({
+                type: "success",
+                message: "风机数据录入完成！"
+              });
+            })
+            .catch(err => {
+              this.$message.error(err);
+            });
+        }
+      }
+      // //step3 写入当日停机停运
+      // if (this.currentActive == 2){
+
+      // }
+    },
+    //文件上传成功的钩子
+    uploadSuccess() {
+      this.$message({
+        type: "success",
+        message: "上传成功！"
+      });
+      this.loadGzps();
+    },
+    init() {
+      this.loadGzps();
+      this. icon = ["el-icon-help", "el-icon-help", "el-icon-help"]
+      this.currentActive = 0;
+      this.endDialogVisible = false;
+      this.formVisible = false;
+      this.endDialogData = {}
+      this.endDialogData_pre = {}
+    }
   }
 };
 </script>

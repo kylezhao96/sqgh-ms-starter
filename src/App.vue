@@ -9,12 +9,13 @@
     </el-header>
     <el-main>
       <el-row :gutter="20">
-        <el-col :xs="24" :sm="18" :md="12" :lg="6" :xl="3">
+        <el-col :xs="24" :sm="8" :md="8" :lg="8" :xl="3" style='margin-bottom:20px'>
           <dtask-list :title="title1"></dtask-list>
           <mtask-list :title="title2"></mtask-list>
         </el-col>
-        <el-col :xs="24" :sm="18" :md="14" :lg="10" :xl="10">
+        <el-col :xs="24" :sm="16" :md="16" :lg="16" :xl="10" style='margin-bottom:20px'>
           <wtm-list></wtm-list>
+          <pc-list></pc-list>
         </el-col>
       </el-row>
     </el-main>
@@ -26,6 +27,7 @@
 import dtaskList from "./components/DtaskList";
 import mtaskList from "./components/MtaskList";
 import wtmlist from "./components/WtmList";
+import pclist from "./components/PowerCutList"
 // import TodoItem from "./components/TodoItem";
 export default {
   name: "app",
@@ -39,7 +41,8 @@ export default {
   components: {
     "dtask-list": dtaskList,
     "mtask-list": mtaskList,
-    "wtm-list": wtmlist
+    "wtm-list": wtmlist,
+    "pc-list": pclist
   }
 };
 </script>
