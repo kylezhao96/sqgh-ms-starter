@@ -451,22 +451,22 @@ export default {
       //   dminl: this.power.min,
       // };
       this.gform = {
-        fka312: 2709.2,
-        bka312: 5.42,
-        fka313: 2631.8,
-        bka313: 5.64,
-        fka322: 2840.8,
-        bka322: 5.19,
-        fka323: 2628.85,
-        bka323: 5.19,
-        fka31b: 127.4,
+        fka312: 2774.53,
+        bka312: 5.44,
+        fka313: 2699.80,
+        bka313: 5.66,
+        fka322: 2896.67,
+        bka322: 5.22,
+        fka323: 2679.88,
+        bka323: 5.26,
+        fka31b: 129.86,
         fka21b: 838.64,
-        bka311: 34.04,
-        bkr311: 2235.3,
-        bka321: 29.82,
-        bkr321: 1826.37,
-        fka111: 7.57,
-        bka111: 2459.0,
+        bka311: 34.44,
+        bkr311: 2261.78,
+        bka321: 30.03,
+        bkr321: 1835.62,
+        fka111: 7.59,
+        bka111: 2516.01,
         dmaxs1: 10,
         dmins1: 0,
         davgs1: 5,
@@ -573,6 +573,21 @@ export default {
             this.$message.error(err);
             this.icon[this.currentActive] = "el-icon-error";
           });
+      }
+      //执行步骤5，写入桃园报表
+      if(this.currentActive ==4 ){
+        this.$http({
+          methods:"get",
+          url:"/api/toty"
+        }).then(res=>{
+          if(res.status == 200){
+            this.currentActive++;
+            this.$message({
+              message: "写入oms日报成功",
+              type: "success"
+            });
+          }
+        })
       }
     },
     init() {
