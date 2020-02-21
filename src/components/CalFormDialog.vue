@@ -54,334 +54,306 @@
         </el-row>
       </div>
       <div v-else>
-        <el-row :gutter="20">
-          <el-col :span="6">
-            <el-card class="box-card" shadow="never">
-              <div slot="header">
-                <span>110kV电度表</span>
-              </div>
-              <el-form label-width="80px" :model="form111">
+        <el-form label-width="80px" :model="form">
+          <el-row :gutter="20">
+            <el-col :span="6">
+              <el-card class="box-card" shadow="never">
+                <div slot="header">
+                  <span>110kV电度表</span>
+                </div>
                 <el-form-item label="正向有功">
-                  <el-input v-model="form111.fa" placeholder="KWH"></el-input>
+                  <el-input v-model="form.fka111" placeholder="KWH"></el-input>
                 </el-form-item>
                 <el-form-item label="反向有功">
-                  <el-input v-model="form111.ba" placeholder="KWH"></el-input>
+                  <el-input v-model="form.bka111" placeholder="KWH"></el-input>
                 </el-form-item>
                 <el-form-item label="正向无功">
-                  <el-input v-model="form111.fr" placeholder="KVarH" :disabled="true"></el-input>
+                  <el-input placeholder="KVarH" :disabled="true"></el-input>
                 </el-form-item>
                 <el-form-item label="反向无功">
-                  <el-input v-model="form111.br" placeholder="KVarH" :disabled="true"></el-input>
+                  <el-input placeholder="KVarH" :disabled="true"></el-input>
                 </el-form-item>
-              </el-form>
-            </el-card>
-          </el-col>
-          <el-col :span="6">
-            <el-card class="box-card" shadow="never">
-              <div slot="header">
-                <span>主变高压侧</span>
-              </div>
-              <el-form label-width="80px" :model="form2">
+              </el-card>
+            </el-col>
+            <el-col :span="6">
+              <el-card class="box-card" shadow="never">
+                <div slot="header">
+                  <span>主变高压侧</span>
+                </div>
                 <el-form-item label="正向有功">
-                  <el-input v-model="form2.fa" placeholder="KWH" :disabled="true"></el-input>
+                  <el-input placeholder="KWH" :disabled="true"></el-input>
                 </el-form-item>
                 <el-form-item label="反向有功">
-                  <el-input v-model="form2.ba" placeholder="KWH" :disabled="true"></el-input>
+                  <el-input placeholder="KWH" :disabled="true"></el-input>
                 </el-form-item>
                 <el-form-item label="正向无功">
-                  <el-input v-model="form2.fr" placeholder="KVarH" :disabled="true"></el-input>
+                  <el-input placeholder="KVarH" :disabled="true"></el-input>
                 </el-form-item>
                 <el-form-item label="反向无功">
-                  <el-input v-model="form2.br" placeholder="KVarH" :disabled="true"></el-input>
+                  <el-input placeholder="KVarH" :disabled="true"></el-input>
                 </el-form-item>
-              </el-form>
-            </el-card>
-          </el-col>
-          <el-col :span="6">
-            <el-card class="box-card" shadow="never">
-              <div slot="header">
-                <span>301开关</span>
-              </div>
-              <el-form label-width="80px" :model="form301">
+              </el-card>
+            </el-col>
+            <el-col :span="6">
+              <el-card class="box-card" shadow="never">
+                <div slot="header">
+                  <span>301开关</span>
+                </div>
                 <el-form-item label="正向有功">
-                  <el-input v-model="form301.fa" placeholder="KWH" :disabled="true"></el-input>
+                  <el-input placeholder="KWH" :disabled="true"></el-input>
                 </el-form-item>
                 <el-form-item label="反向有功">
-                  <el-input v-model="form301.ba" placeholder="KWH" :disabled="true"></el-input>
+                  <el-input placeholder="KWH" :disabled="true"></el-input>
                 </el-form-item>
                 <el-form-item label="正向无功">
-                  <el-input v-model="form301.fr" placeholder="KVarH" :disabled="true"></el-input>
+                  <el-input placeholder="KVarH" :disabled="true"></el-input>
                 </el-form-item>
                 <el-form-item label="反向无功">
-                  <el-input v-model="form301.br" placeholder="KVarH" :disabled="true"></el-input>
+                  <el-input placeholder="KVarH" :disabled="true"></el-input>
                 </el-form-item>
-              </el-form>
-            </el-card>
-          </el-col>
-          <el-col :span="6">
-            <el-card class="box-card" shadow="never">
-              <div slot="header">
-                <span>302开关</span>
-              </div>
-              <el-form label-width="80px" :model="form302">
+              </el-card>
+            </el-col>
+            <el-col :span="6">
+              <el-card class="box-card" shadow="never">
+                <div slot="header">
+                  <span>302开关</span>
+                </div>
                 <el-form-item label="正向有功">
-                  <el-input v-model="form302.fa" placeholder="KWH" :disabled="true"></el-input>
+                  <el-input placeholder="KWH" :disabled="true"></el-input>
                 </el-form-item>
                 <el-form-item label="反向有功">
-                  <el-input v-model="form302.ba" placeholder="KWH" :disabled="true"></el-input>
+                  <el-input placeholder="KWH" :disabled="true"></el-input>
                 </el-form-item>
                 <el-form-item label="正向无功">
-                  <el-input v-model="form302.fr" placeholder="KVarH" :disabled="true"></el-input>
+                  <el-input placeholder="KVarH" :disabled="true"></el-input>
                 </el-form-item>
                 <el-form-item label="反向无功">
-                  <el-input v-model="form302.br" placeholder="KVarH" :disabled="true"></el-input>
+                  <el-input placeholder="KVarH" :disabled="true"></el-input>
                 </el-form-item>
-              </el-form>
-            </el-card>
-          </el-col>
-        </el-row>
-        <el-row :gutter="20">
-          <el-col :span="6">
-            <el-card class="box-card" shadow="never">
-              <div slot="header">
-                <span>#1集电线电度表</span>
-              </div>
-              <el-form label-width="80px" :model="form312">
+              </el-card>
+            </el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="6">
+              <el-card class="box-card" shadow="never">
+                <div slot="header">
+                  <span>#1集电线电度表</span>
+                </div>
                 <el-form-item label="正向有功">
-                  <el-input v-model="form312.fa" placeholder="KWH"></el-input>
+                  <el-input v-model="form.fka312" placeholder="KWH"></el-input>
                 </el-form-item>
                 <el-form-item label="反向有功">
-                  <el-input v-model="form312.ba" placeholder="KWH"></el-input>
+                  <el-input v-model="form.bka312" placeholder="KWH"></el-input>
                 </el-form-item>
                 <el-form-item label="正向无功">
-                  <el-input v-model="form312.fr" placeholder="KVarH" :disabled="true"></el-input>
+                  <el-input placeholder="KVarH" :disabled="true"></el-input>
                 </el-form-item>
                 <el-form-item label="反向无功">
-                  <el-input v-model="form312.br" placeholder="KVarH" :disabled="true"></el-input>
+                  <el-input placeholder="KVarH" :disabled="true"></el-input>
                 </el-form-item>
-              </el-form>
-            </el-card>
-          </el-col>
-          <el-col :span="6">
-            <el-card class="box-card" shadow="never">
-              <div slot="header">
-                <span>#2集电线</span>
-              </div>
-              <el-form label-width="80px" :model="form313">
+              </el-card>
+            </el-col>
+            <el-col :span="6">
+              <el-card class="box-card" shadow="never">
+                <div slot="header">
+                  <span>#2集电线</span>
+                </div>
                 <el-form-item label="正向有功">
-                  <el-input v-model="form313.fa" placeholder="KWH"></el-input>
+                  <el-input v-model="form.fka313" placeholder="KWH"></el-input>
                 </el-form-item>
                 <el-form-item label="反向有功">
-                  <el-input v-model="form313.ba" placeholder="KWH"></el-input>
+                  <el-input v-model="form.bka313" placeholder="KWH"></el-input>
                 </el-form-item>
                 <el-form-item label="正向无功">
-                  <el-input v-model="form313.fr" placeholder="KVarH" :disabled="true"></el-input>
+                  <el-input placeholder="KVarH" :disabled="true"></el-input>
                 </el-form-item>
                 <el-form-item label="反向无功">
-                  <el-input v-model="form313.br" placeholder="KVarH" :disabled="true"></el-input>
+                  <el-input placeholder="KVarH" :disabled="true"></el-input>
                 </el-form-item>
-              </el-form>
-            </el-card>
-          </el-col>
-          <el-col :span="6">
-            <el-card class="box-card" shadow="never">
-              <div slot="header">
-                <span>#1SVG</span>
-              </div>
-              <el-form label-width="80px" :model="form311">
+              </el-card>
+            </el-col>
+            <el-col :span="6">
+              <el-card class="box-card" shadow="never">
+                <div slot="header">
+                  <span>#1SVG</span>
+                </div>
                 <el-form-item label="正向有功">
-                  <el-input v-model="form311.fa" placeholder="KWH"></el-input>
+                  <el-input v-model="form.bka311" placeholder="KWH"></el-input>
                 </el-form-item>
                 <el-form-item label="反向有功">
-                  <el-input v-model="form311.ba" placeholder="KWH" :disabled="true"></el-input>
+                  <el-input placeholder="KWH" :disabled="true"></el-input>
                 </el-form-item>
                 <el-form-item label="正向无功">
-                  <el-input v-model="form311.fr" placeholder="KVarH"></el-input>
+                  <el-input v-model="form.bkr311" placeholder="KVarH"></el-input>
                 </el-form-item>
                 <el-form-item label="反向无功">
-                  <el-input v-model="form311.br" placeholder="KVarH" :disabled="true"></el-input>
+                  <el-input placeholder="KVarH" :disabled="true"></el-input>
                 </el-form-item>
-              </el-form>
-            </el-card>
-          </el-col>
-          <el-col :span="6">
-            <el-card class="box-card" shadow="never">
-              <div slot="header">
-                <span>#1接地变开关</span>
-              </div>
-              <el-form label-width="80px" :model="form31b">
+              </el-card>
+            </el-col>
+            <el-col :span="6">
+              <el-card class="box-card" shadow="never">
+                <div slot="header">
+                  <span>#1接地变开关</span>
+                </div>
                 <el-form-item label="正向有功">
-                  <el-input v-model="form31b.fa" placeholder="KWH"></el-input>
+                  <el-input v-model="form.fka31b" placeholder="KWH"></el-input>
                 </el-form-item>
                 <el-form-item label="反向有功">
-                  <el-input v-model="form31b.ba" placeholder="KWH" :disabled="true"></el-input>
+                  <el-input placeholder="KWH" :disabled="true"></el-input>
                 </el-form-item>
                 <el-form-item label="正向无功">
-                  <el-input v-model="form31b.fr" placeholder="KVarH" :disabled="true"></el-input>
+                  <el-input placeholder="KVarH" :disabled="true"></el-input>
                 </el-form-item>
                 <el-form-item label="反向无功">
-                  <el-input v-model="form31b.br" placeholder="KVarH" :disabled="true"></el-input>
+                  <el-input placeholder="KVarH" :disabled="true"></el-input>
                 </el-form-item>
-              </el-form>
-            </el-card>
-          </el-col>
-        </el-row>
-        <el-row :gutter="20">
-          <el-col :span="6">
-            <el-card class="box-card" shadow="never">
-              <div slot="header">
-                <span>#3集电线</span>
-              </div>
-              <el-form label-width="80px" :model="form322">
+              </el-card>
+            </el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="6">
+              <el-card class="box-card" shadow="never">
+                <div slot="header">
+                  <span>#3集电线</span>
+                </div>
                 <el-form-item label="正向有功">
-                  <el-input v-model="form322.fa" placeholder="KWH"></el-input>
+                  <el-input v-model="form.fka322" placeholder="KWH"></el-input>
                 </el-form-item>
                 <el-form-item label="反向有功">
-                  <el-input v-model="form322.ba" placeholder="KWH"></el-input>
+                  <el-input v-model="form.bka322" placeholder="KWH"></el-input>
                 </el-form-item>
                 <el-form-item label="正向无功">
-                  <el-input v-model="form322.fr" placeholder="KVarH" :disabled="true"></el-input>
+                  <el-input placeholder="KVarH" :disabled="true"></el-input>
                 </el-form-item>
                 <el-form-item label="反向无功">
-                  <el-input v-model="form322.br" placeholder="KVarH" :disabled="true"></el-input>
+                  <el-input placeholder="KVarH" :disabled="true"></el-input>
                 </el-form-item>
-              </el-form>
-            </el-card>
-          </el-col>
-          <el-col :span="6">
-            <el-card class="box-card" shadow="never">
-              <div slot="header">
-                <span>#4集电线</span>
-              </div>
-              <el-form label-width="80px" :model="form323">
+              </el-card>
+            </el-col>
+            <el-col :span="6">
+              <el-card class="box-card" shadow="never">
+                <div slot="header">
+                  <span>#4集电线</span>
+                </div>
                 <el-form-item label="正向有功">
-                  <el-input v-model="form323.fa" placeholder="KWH"></el-input>
+                  <el-input v-model="form.fka323" placeholder="KWH"></el-input>
                 </el-form-item>
                 <el-form-item label="反向有功">
-                  <el-input v-model="form323.ba" placeholder="KWH"></el-input>
+                  <el-input v-model="form.bka323" placeholder="KWH"></el-input>
                 </el-form-item>
                 <el-form-item label="正向无功">
-                  <el-input v-model="form323.fr" placeholder="KVarH" :disabled="true"></el-input>
+                  <el-input placeholder="KVarH" :disabled="true"></el-input>
                 </el-form-item>
                 <el-form-item label="反向无功">
-                  <el-input v-model="form323.br" placeholder="KVarH" :disabled="true"></el-input>
+                  <el-input placeholder="KVarH" :disabled="true"></el-input>
                 </el-form-item>
-              </el-form>
-            </el-card>
-          </el-col>
-          <el-col :span="6">
-            <el-card class="box-card" shadow="never">
-              <div slot="header">
-                <span>#2SVG</span>
-              </div>
-              <el-form label-width="80px" :model="form321">
+              </el-card>
+            </el-col>
+            <el-col :span="6">
+              <el-card class="box-card" shadow="never">
+                <div slot="header">
+                  <span>#2SVG</span>
+                </div>
                 <el-form-item label="正向有功">
-                  <el-input v-model="form321.fa" placeholder="KWH"></el-input>
+                  <el-input v-model="form.bka321" placeholder="KWH"></el-input>
                 </el-form-item>
                 <el-form-item label="反向有功">
-                  <el-input v-model="form321.ba" placeholder="KWH" :disabled="true"></el-input>
+                  <el-input placeholder="KWH" :disabled="true"></el-input>
                 </el-form-item>
                 <el-form-item label="正向无功">
-                  <el-input v-model="form321.fr" placeholder="KVarH"></el-input>
+                  <el-input v-model="form.bkr321" placeholder="KVarH"></el-input>
                 </el-form-item>
                 <el-form-item label="反向无功">
-                  <el-input v-model="form321.br" placeholder="KVarH" :disabled="true"></el-input>
+                  <el-input placeholder="KVarH" :disabled="true"></el-input>
                 </el-form-item>
-              </el-form>
-            </el-card>
-          </el-col>
-          <el-col :span="6">
-            <el-card class="box-card" shadow="never">
-              <div slot="header">
-                <span>#2接地变</span>
-              </div>
-              <el-form label-width="80px" :model="form32b">
+              </el-card>
+            </el-col>
+            <el-col :span="6">
+              <el-card class="box-card" shadow="never">
+                <div slot="header">
+                  <span>#2接地变</span>
+                </div>
                 <el-form-item label="正向有功">
-                  <el-input v-model="form32b.fa" placeholder="KWH" :disabled="true"></el-input>
+                  <el-input placeholder="KWH" :disabled="true"></el-input>
                 </el-form-item>
                 <el-form-item label="反向有功">
-                  <el-input v-model="form32b.ba" placeholder="KWH" :disabled="true"></el-input>
+                  <el-input placeholder="KWH" :disabled="true"></el-input>
                 </el-form-item>
                 <el-form-item label="正向无功">
-                  <el-input v-model="form32b.fr" placeholder="KVarH" :disabled="true"></el-input>
+                  <el-input placeholder="KVarH" :disabled="true"></el-input>
                 </el-form-item>
                 <el-form-item label="反向无功">
-                  <el-input v-model="form32b.br" placeholder="KVarH" :disabled="true"></el-input>
+                  <el-input placeholder="KVarH" :disabled="true"></el-input>
                 </el-form-item>
-              </el-form>
-            </el-card>
-          </el-col>
-        </el-row>
-        <!-- 本行用于填写负荷、风速 -->
-        <el-row :gutter="20">
-          <!-- 一期风速 -->
-          <el-col :span="6">
-            <el-card class="box-card" shadow="never">
-              <div slot="header">
-                <span>一期风速</span>
-              </div>
-              <el-form label-width="80px" :model="ws1">
+              </el-card>
+            </el-col>
+          </el-row>
+          <!-- 本行用于填写负荷、风速 -->
+          <el-row :gutter="20">
+            <!-- 一期风速 -->
+            <el-col :span="6">
+              <el-card class="box-card" shadow="never">
+                <div slot="header">
+                  <span>一期风速</span>
+                </div>
                 <el-form-item label="最大风速">
-                  <el-input v-model="ws1.max" placeholder="m/s"></el-input>
+                  <el-input v-model="form.dmaxs1" placeholder="m/s"></el-input>
                 </el-form-item>
                 <el-form-item label="平均风速">
-                  <el-input v-model="ws1.avg" placeholder="m/s"></el-input>
+                  <el-input v-model="form.davgs1" placeholder="m/s"></el-input>
                 </el-form-item>
                 <el-form-item label="最小风速">
-                  <el-input v-model="ws1.min" placeholder="m/s"></el-input>
+                  <el-input v-model="form.dmins1" placeholder="m/s"></el-input>
                 </el-form-item>
-              </el-form>
-            </el-card>
-          </el-col>
-          <!-- 二期风速 -->
-          <el-col :span="6">
-            <el-card class="box-card" shadow="never">
-              <div slot="header">
-                <span>二期风速</span>
-              </div>
-              <el-form label-width="80px" :model="ws2">
+              </el-card>
+            </el-col>
+            <!-- 二期风速 -->
+            <el-col :span="6">
+              <el-card class="box-card" shadow="never">
+                <div slot="header">
+                  <span>二期风速</span>
+                </div>
                 <el-form-item label="最大风速">
-                  <el-input v-model="ws2.max" placeholder="m/s"></el-input>
+                  <el-input v-model="form.dmaxs2" placeholder="m/s"></el-input>
                 </el-form-item>
                 <el-form-item label="平均风速">
-                  <el-input v-model="ws2.avg" placeholder="m/s"></el-input>
+                  <el-input v-model="form.davgs2" placeholder="m/s"></el-input>
                 </el-form-item>
                 <el-form-item label="最小风速">
-                  <el-input v-model="ws2.min" placeholder="m/s"></el-input>
+                  <el-input v-model="form.dmins2" placeholder="m/s"></el-input>
                 </el-form-item>
-              </el-form>
-            </el-card>
-          </el-col>
-          <!-- 负荷 -->
-          <el-col :span="6">
-            <el-card class="box-card" shadow="never">
-              <div slot="header">
-                <span>负荷</span>
-              </div>
-              <el-form label-width="80px" :model="power">
+              </el-card>
+            </el-col>
+            <!-- 负荷 -->
+            <el-col :span="6">
+              <el-card class="box-card" shadow="never">
+                <div slot="header">
+                  <span>负荷</span>
+                </div>
                 <el-form-item label="最大负荷">
-                  <el-input v-model="power.max" placeholder="MW"></el-input>
+                  <el-input v-model="form.dmaxl" placeholder="MW"></el-input>
                 </el-form-item>
                 <el-form-item label="最小负荷">
-                  <el-input v-model="power.min" placeholder="MW"></el-input>
+                  <el-input v-model="form.dminl" placeholder="MW"></el-input>
                 </el-form-item>
-              </el-form>
-            </el-card>
-          </el-col>
-        </el-row>
-        <!-- <el-row>
+              </el-card>
+            </el-col>
+          </el-row>
+          <!-- <el-row>
         <el-col :span="12"></el-col>
-        </el-row>-->
-        <el-row type="flex" justify="end">
-          <el-popconfirm
-            title="请确保日报表在关闭状态!"
-            icon="el-icon-warning"
-            iconColor="#e8620d"
-            @onConfirm="sendForm()"
-          >
-            <el-button slot="reference">上报</el-button>
-          </el-popconfirm>
-        </el-row>
+          </el-row>-->
+          <el-row type="flex" justify="end">
+            <el-popconfirm
+              title="请确保日报表在关闭状态!"
+              icon="el-icon-warning"
+              iconColor="#e8620d"
+              @onConfirm="sendForm()"
+            >
+              <el-button slot="reference">上报</el-button>
+            </el-popconfirm>
+          </el-row>
+        </el-form>
       </div>
     </el-dialog>
   </div>
@@ -393,21 +365,7 @@ export default {
   components: {},
   data() {
     return {
-      form111: {},
-      form311: {},
-      form312: {},
-      form313: {},
-      form31b: {},
-      form32b: {},
-      form321: {},
-      form322: {},
-      form323: {},
-      form2: {},
-      form301: {},
-      form302: {},
-      ws1: {},
-      ws2: {},
-      power: {},
+      form: {},
       gform: {},
       dialogCdfHidden: false,
       currentActive: 0,
@@ -419,63 +377,74 @@ export default {
     };
   },
   props: ["cdialogVisible"],
-
+  mounted() {
+    this.getBmz();
+  },
   methods: {
+    //获取标码值及昨日发电量
+    getBmz() {
+      this.$http({
+        method: "get",
+        url: "/api/getbmz"
+      }).then(res => {
+        this.form = res["data"];
+      });
+    },
     // 报表上报
     sendForm() {
       // 赋值
-      // this.gform = {
-      //   fka312: this.form312.fa,
-      //   bka312: this.form312.ba,
-      //   fka313: this.form313.fa,
-      //   bka313: this.form313.ba,
-      //   fka322: this.form322.fa,
-      //   bka322: this.form322.ba,
-      //   fka323: this.form323.fa,
-      //   bka323: this.form323.ba,
-      //   fka31b: this.form31b.fa,
-      //   fka21b: 838.64,
-      //   bka311: this.form311.fa,
-      //   bkr311: this.form311.fr,
-      //   bka321: this.form321.fa,
-      //   bkr321: this.form321.fr,
-      //   fka111: this.form111.fa,
-      //   bka111: this.form111.ba,
-      //   dmaxs1: this.ws1.max,
-      //   dmins1: this.ws1.min,
-      //   davgs1: this.ws1.avg,
-      //   dmaxs2: this.ws2.max,
-      //   dmins2: this.ws2.min,
-      //   davgs2: this.ws2.avg,
-      //   dmaxl: this.power.max,
-      //   dminl: this.power.min,
-      // };
       this.gform = {
-        fka312: 2774.53,
-        bka312: 5.44,
-        fka313: 2699.80,
-        bka313: 5.66,
-        fka322: 2896.67,
-        bka322: 5.22,
-        fka323: 2679.88,
-        bka323: 5.26,
-        fka31b: 129.86,
+        fka312: this.fka312,
+        bka312: this.bka312,
+        fka313: this.fka313,
+        bka313: this.bka313,
+        fka322: this.fka322,
+        bka322: this.bka322,
+        fka323: this.fka323,
+        bka323: this.bka323,
+        fka31b: this.fka31b,
         fka21b: 838.64,
-        bka311: 34.44,
-        bkr311: 2261.78,
-        bka321: 30.03,
-        bkr321: 1835.62,
-        fka111: 7.59,
-        bka111: 2516.01,
-        dmaxs1: 10,
-        dmins1: 0,
-        davgs1: 5,
-        dmaxs2: 12,
-        dmins2: 2,
-        davgs2: 6,
-        dmaxl: 99,
-        dminl: 0
+        bka311: this.bka311,
+        bkr311: this.bkr311,
+        bka321: this.bka321,
+        bkr321: this.bkr321,
+        fka111: this.fka111,
+        bka111: this.bka111,
+        dmaxs1: this.dmaxs1,
+        dmins1: this.dmins1,
+        davgs1: this.davgs1,
+        dmaxs2: this.dmaxs2,
+        dmins2: this.dmins2,
+        davgs2: this.davgs2,
+        dmaxl: this.dmaxl,
+        dminl: this.dminl
       };
+      // this.gform = {
+      //   fka312: 2774.53,
+      //   bka312: 5.44,
+      //   fka313: 2699.80,
+      //   bka313: 5.66,
+      //   fka322: 2896.67,
+      //   bka322: 5.22,
+      //   fka323: 2679.88,
+      //   bka323: 5.26,
+      //   fka31b: 129.86,
+      //   fka21b: 838.64,
+      //   bka311: 34.44,
+      //   bkr311: 2261.78,
+      //   bka321: 30.03,
+      //   bkr321: 1835.62,
+      //   fka111: 7.59,
+      //   bka111: 2516.01,
+      //   dmaxs1: 10,
+      //   dmins1: 0,
+      //   davgs1: 5,
+      //   dmaxs2: 12,
+      //   dmins2: 2,
+      //   davgs2: 6,
+      //   dmaxl: 99,
+      //   dminl: 0
+      // };
       this.dialogCdfHidden = true;
       this.next();
     },
@@ -560,8 +529,8 @@ export default {
           url: "/api/tooms"
         })
           .then(res => {
-            this.table_2 = res['data']
-            this.table_2_hidden = false
+            this.table_2 = res["data"];
+            this.table_2_hidden = false;
             this.currentActive++;
             this.$message({
               message: "写入oms日报成功",
@@ -575,19 +544,19 @@ export default {
           });
       }
       //执行步骤5，写入桃园报表
-      if(this.currentActive ==4 ){
+      if (this.currentActive == 4) {
         this.$http({
-          methods:"get",
-          url:"/api/toty"
-        }).then(res=>{
-          if(res.status == 200){
+          methods: "get",
+          url: "/api/toty"
+        }).then(res => {
+          if (res.status == 200) {
             this.currentActive++;
             this.$message({
               message: "写入oms日报成功",
               type: "success"
             });
           }
-        })
+        });
       }
     },
     init() {

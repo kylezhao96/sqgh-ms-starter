@@ -1,5 +1,5 @@
 <template>
-  <el-card id="todo-list" class="todo-card">
+  <el-card id="todo-list" class="todo-card" v-loading = loading>
     <div slot="header" class="todo-headedr">
       <!-- 用于填写出力的对话框 -->
       <status-dialog :shour="shour" :sdialogVisible="dialogVisible_1" @changeSdv="changeSdv"></status-dialog>
@@ -64,6 +64,7 @@ export default {
       taskDialogVisible: false,
       todoitems: {},
       task: {},
+      loading: false,
     };
   },
   props: ["title"],
@@ -139,6 +140,21 @@ export default {
       }
       if (e.name == "表码值录入") {
         this.dialogVisible_2 = true;
+      }
+      if (e.name == "报送集团公司日报") {
+        this.loading = true
+        this.$message("开始执行！");
+        this.$http({
+          method:'get',
+          url:"/api/submitjtrb"
+        }).then(res=>{
+          this.loading = false
+          if(res.status == 200){
+            this.$message("填写已完成，请自行检验");
+          }else{
+            this.$message.error("发生未知错误！");
+          }
+        })
       }
     },
     // sdialog发生状态改变时传值

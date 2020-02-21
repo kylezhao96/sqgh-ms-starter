@@ -9,7 +9,7 @@
     </el-header>
     <el-main>
       <el-row :gutter="20">
-        <el-col :xs="24" :sm="8" :md="8" :lg="8" :xl="3" style='margin-bottom:20px'>
+        <el-col :xs="24" :sm="8" :md="8" :lg="8" :xl="6" style='margin-bottom:20px'>
           <dtask-list :title="title1"></dtask-list>
           <mtask-list :title="title2"></mtask-list>
         </el-col>
