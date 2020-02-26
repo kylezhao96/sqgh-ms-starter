@@ -9,9 +9,15 @@
     </el-header>
     <el-main>
       <el-row :gutter="20">
+<<<<<<< HEAD
         <el-col :xs="24" :sm="8" :md="8" :lg="8" :xl="3" style='margin-bottom:20px'>
           <dtask-list title="日常工作"></dtask-list>
           <mtask-list title="月度工作"></mtask-list>
+=======
+        <el-col :xs="24" :sm="8" :md="8" :lg="8" :xl="6" style='margin-bottom:20px'>
+          <dtask-list :title="title1"></dtask-list>
+          <mtask-list :title="title2"></mtask-list>
+>>>>>>> f866dde211a738f05e384a4f6b203c4230cd9dc3
         </el-col>
         <el-col :xs="24" :sm="16" :md="16" :lg="16" :xl="10" style='margin-bottom:20px'>
           <wtm-list></wtm-list>
