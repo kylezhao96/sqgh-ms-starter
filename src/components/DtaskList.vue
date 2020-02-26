@@ -1,10 +1,8 @@
 <template>
-  <el-card id="todo-list" class="todo-card">
+  <el-card id="todo-list" class="todo-card" v-loading = loading>
     <div slot="header" class="todo-headedr">
       <!-- 用于填写出力的对话框 -->
       <status-dialog :shour="shour" :sdialogVisible="dialogVisible_1" @changeSdv="changeSdv"></status-dialog>
-      <!-- 用于填写表码值的对话框 -->
-      <calform-dialog :cdialogVisible="dialogVisible_2" @changeCdv="changeCdv"></calform-dialog>
       <!-- 标题 -->
       <el-row>
         <el-col :span="6">
@@ -45,25 +43,22 @@
 
 <script>
 import statusDialog from "./StatusDialog.vue";
-import calformDialog from "./CalFormDialog.vue";
 export default {
   name: "dtaskList",
   components: {
     "status-dialog": statusDialog,
-    "calform-dialog": calformDialog
   },
   data() {
     return {
       shour: "",
       // 填写出力对话框
       dialogVisible_1: false,
-      // 填写表码值对话框
-      dialogVisible_2: false,
 
       listTitle: "",
       taskDialogVisible: false,
       todoitems: {},
       task: {},
+      loading: false,
     };
   },
   props: ["title"],
@@ -137,18 +132,27 @@ export default {
         this.shour = e.hour;
         this.dialogVisible_1 = true;
       }
-      if (e.name == "表码值录入") {
-        this.dialogVisible_2 = true;
+      if (e.name == "报送集团公司日报") {
+        this.loading = true
+        this.$message("开始执行！");
+        this.$http({
+          method:'get',
+          url:"/api/submitjtrb"
+        }).then(res=>{
+          this.loading = false
+          if(res.status == 200){
+            this.$message("填写已完成，请自行检验");
+          }else{
+            this.$message.error("发生未知错误！");
+          }
+        })
       }
     },
     // sdialog发生状态改变时传值
     changeSdv(e) {
       this.dialogVisible_1 = e;
     },
-    // cdialog状态传递
-    changeCdv(e) {
-      this.dialogVisible_2 = e;
-    },
+
     
   }
 };
