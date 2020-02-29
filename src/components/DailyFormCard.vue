@@ -13,6 +13,7 @@
       >
         录入表码值
         <el-dropdown-menu slot="dropdown">
+          <el-dropdown-item command="datasyn">数据同步</el-dropdown-item>
           <el-dropdown-item command="tocdf">写入日报表</el-dropdown-item>
           <el-dropdown-item command="showoms">显示OMS报表</el-dropdown-item>
           <el-dropdown-item command="toty">写入桃园报表</el-dropdown-item>
@@ -389,19 +390,24 @@
       </div>
     </el-dialog>
     <!-- oms展示dialog -->
-    <el-dialog :visible="omsDialogVisible" width="1000px" title="OMS日报" :before-close="shutOmsDialog">
+    <el-dialog
+      :visible="omsDialogVisible"
+      width="1000px"
+      title="OMS日报"
+      :before-close="shutOmsDialog"
+    >
       <el-table :data="omsTable" align="center" row-key="id">
-            <el-table-column prop="installed_cap" label="装机容量"></el-table-column>
-            <el-table-column prop="boot_cap" label="开机容量"></el-table-column>
-            <el-table-column prop="g_p" label="发电量"></el-table-column>
-            <el-table-column prop="on_p" label="上网电量"></el-table-column>
-            <el-table-column prop="used_p" label="厂用电量"></el-table-column>
-            <el-table-column prop="fix_cap" label="检修容量"></el-table-column>
-            <el-table-column prop="blocked_p" label="站内受阻电量"></el-table-column>
-            <el-table-column prop="limited_p" label="调峰受阻电量"></el-table-column>
-            <el-table-column prop="max_l" label="最大负荷"></el-table-column>
-            <el-table-column prop="min_l" label="最小负荷"></el-table-column>
-          </el-table>
+        <el-table-column prop="installed_cap" label="装机容量"></el-table-column>
+        <el-table-column prop="boot_cap" label="开机容量"></el-table-column>
+        <el-table-column prop="g_p" label="发电量"></el-table-column>
+        <el-table-column prop="on_p" label="上网电量"></el-table-column>
+        <el-table-column prop="used_p" label="厂用电量"></el-table-column>
+        <el-table-column prop="fix_cap" label="检修容量"></el-table-column>
+        <el-table-column prop="blocked_p" label="站内受阻电量"></el-table-column>
+        <el-table-column prop="limited_p" label="调峰受阻电量"></el-table-column>
+        <el-table-column prop="max_l" label="最大负荷"></el-table-column>
+        <el-table-column prop="min_l" label="最小负荷"></el-table-column>
+      </el-table>
     </el-dialog>
   </el-card>
 </template>
@@ -423,8 +429,8 @@ export default {
       table_2_hidden: true,
       table_1: [], //日报表数据
       table_2: [],
-      omsTable:[],
-      omsDialogVisible:false
+      omsTable: [],
+      omsDialogVisible: false
     };
   },
   mounted() {
@@ -441,7 +447,9 @@ export default {
       })
         .then(res => {
           this.loading = false;
-          this.tableData = JSON.parse(res["data"]);
+          if (res.status == 200) {
+            this.tableData = JSON.parse(res["data"]);
+          }
         })
         .catch(err => {
           this.loading = false;
@@ -524,20 +532,20 @@ export default {
     tocdf() {
       this.icon[this.currentActive] = "el-icon-loading"; //显示加载中
       var startmsg = this.$message({
-        message:'开始写入日报表',
-        duration:0,
-      })
+        message: "开始写入日报表",
+        duration: 0
+      });
       this.$http({
         method: "post",
         url: "/api/toexcel",
-        data: this.form,
+        data: this.form
       })
         .then(() => {
-          if(this.currentActive ==1){
+          if (this.currentActive == 1) {
             this.currentActive = 2;
             this.checkout();
           }
-          startmsg.close()
+          startmsg.close();
           this.$message({
             message: "写入日报表成功！",
             type: "success"
@@ -611,26 +619,48 @@ export default {
       });
     },
     shutDialog() {
-      this.init()
+      this.init();
     },
     handleCommand(command) {
-      if (JSON.stringify(this.form) === "{}") {
-        this.$message({
-          type: "warning",
-          message: "请先录入表码值！"
+      if (command == "datasyn") {
+        var msg = this.$message({
+          message: "开始数据同步",
+          duration: 0
+        });
+        this.$http({
+          methods: "get",
+          url: "/api/cdfsyn"
+        }).then(res => {
+          if (res.status == 200) {
+            msg.close();
+            this.$message({
+              type: "success",
+              message: "数据同步成功",
+            });
+            this.getData();
+          }else{
+            this.$message.error('未知错误')
+          }
         });
       } else {
-        if (command == "tocdf") {
-          this.tocdf();
-        }
-        if (command == "showoms") {
-          this.$http({
-            methods:'get',
-            url:'/api/getoms'
-          }).then(res=>{
-            this.omsDialogVisible = true
-            this.omsTable = res['data']
-          })
+        if (JSON.stringify(this.form) === "{}") {
+          this.$message({
+            type: "warning",
+            message: "请先录入表码值！"
+          });
+        } else {
+          if (command == "tocdf") {
+            this.tocdf();
+          }
+          if (command == "showoms") {
+            this.$http({
+              methods: "get",
+              url: "/api/getoms"
+            }).then(res => {
+              this.omsDialogVisible = true;
+              this.omsTable = res["data"];
+            });
+          }
         }
       }
     },
@@ -642,8 +672,8 @@ export default {
       this.icon = ["", "", "", "", "", ""];
       this.dialogCdfHidden = false;
     },
-    shutOmsDialog(){
-      this.omsDialogVisible = false
+    shutOmsDialog() {
+      this.omsDialogVisible = false;
     }
   }
 };

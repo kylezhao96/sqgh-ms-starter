@@ -1,17 +1,26 @@
 <template>
   <el-card v-loading="loading" style="margin-bottom:20px">
-    <!-- 编辑弹窗 -->
-    <el-dialog title="编辑"></el-dialog>
+    <!-- 上传工作票弹窗 -->
+    <el-dialog title="上传工作票" :visible="uploadDialogVisible" width="400px" :before-close="handleuploadDialogClose">
+          <el-upload action="/api/postgzp" drag width="100%">
+            <i class="el-icon-upload"></i>
+            <div class="el-upload__text">
+              将工作票文件拖到此处，或
+              <em>点击上传</em>
+            </div>
+            <div class="el-upload__tip" slot="tip">建议每次上传一张工作票</div>
+          </el-upload>
+    </el-dialog>
     <!-- 终结弹窗 -->
-    <el-dialog title="终结" :visible.sync="endDialogVisible" :width="endDialogWidth" :close-on-click-modal='false'>
+    <el-dialog
+      title="终结"
+      :visible.sync="endDialogVisible"
+      :width="endDialogWidth"
+      :close-on-click-modal="false"
+    >
       <!-- form -->
-      <el-form
-        :model="endDialogData"
-        ref="endDialogData"
-        label-width="auto"
-        v-if="formVisible"
-      > 
-        <el-row type="flex" justify="space-between">
+      <el-form :model="endDialogData" ref="endDialogData" label-width="auto" v-if="formVisible">
+        <el-row >
           <el-col
             :span="endDialogItemSpan"
             v-for="(wtm, index) in endDialogData.wtms"
@@ -90,23 +99,20 @@
     <!-- 展示窗口 -->
     <div slot="header" class="wtm-headedr">
       <span>风机维护</span>
-      <!-- <el-button
-        style="float: right; padding: 3px 3px"
+      <el-dropdown
+        split-button
         type="primary"
-        icon="el-icon-plus"
-        circle
-        @click="sdialogVisible = true"
-      ></el-button>-->
-      <el-upload
-        action="/api/postgzp"
-        style="float: right"
-        :show-file-list="false"
-        limit="1"
-        :on-success="uploadSuccess"
+        style="float: right;"
+        size="mini"
+        trigger="click"
+        @command="handleCommand"
+        @click="uploadDialogVisible = true"
       >
-        <!-- <el-button size="small" type="primary">点击上传</el-button> -->
-        <el-button size="mini" type="primary" icon="el-icon-plus" circle></el-button>
-      </el-upload>
+        读取工作票
+        <el-dropdown-menu slot="dropdown">
+          <el-dropdown-item command="datasyn">数据同步</el-dropdown-item>
+        </el-dropdown-menu>
+      </el-dropdown>
     </div>
     <!-- 主体 -->
     <el-table :data="wtmData" style="width: 100%">
@@ -199,6 +205,7 @@ export default {
       endDialogData_pre: {},
       endDialogWidth: "1050px",
       endDialogItemSpan: "8",
+      uploadDialogVisible: false,
       formVisible: true,
       currentActive: 0,
       icon: ["el-icon-help", "el-icon-help", "el-icon-help"],
@@ -316,7 +323,7 @@ export default {
                 this.deleteAction(row);
               } else {
                 this.$message("日报表中无纪录！");
-                this.init()
+                this.init();
               }
             } else {
               this.$message.error("发生未知错误！");
@@ -338,7 +345,7 @@ export default {
             } else {
               this.$message.error("日报表中未找到该记录，请手动删除！");
             }
-            this.init()
+            this.init();
           })
           .catch(err => {
             this.$message.error(err);
@@ -352,6 +359,9 @@ export default {
       if (num_wtms <= 3) {
         this.endDialogWidth = String(350 * num_wtms) + "px";
         this.endDialogItemSpan = String(24 / num_wtms);
+      }else{
+         this.endDialogWidth = '1200px';
+         this.endDialogItemSpan = '6';
       }
       if (row.is_end) {
         this.action = "修改";
@@ -394,7 +404,7 @@ export default {
           })
             .then(res => {
               this.currentActive++;
-              this.init()
+              this.init();
               if (res["data"]) {
                 this.$message({
                   type: "success",
@@ -419,7 +429,7 @@ export default {
           })
             .then(() => {
               this.currentActive++;
-              this.init()
+              this.init();
               this.$message({
                 type: "success",
                 message: "风机数据录入完成！"
@@ -445,12 +455,38 @@ export default {
     },
     init() {
       this.loadGzps();
-      this. icon = ["el-icon-help", "el-icon-help", "el-icon-help"]
+      this.icon = ["el-icon-help", "el-icon-help", "el-icon-help"];
       this.currentActive = 0;
       this.endDialogVisible = false;
       this.formVisible = false;
-      this.endDialogData = {}
-      this.endDialogData_pre = {}
+      this.endDialogData = {};
+      this.endDialogData_pre = {};
+    },
+    handleuploadDialogClose(){
+      this.uploadDialogVisible = false
+    },
+    handleCommand(command) {
+      if (command == "datasyn") {
+        var msg = this.$message({
+          message: "开始数据同步",
+          duration: 0
+        });
+        this.$http({
+          methods: "get",
+          url: "/api/wtmsyn"
+        }).then(res => {
+          if (res.status == 200) {
+            msg.close();
+            this.$message({
+              type: "success",
+              message: "数据同步成功",
+            });
+            this.getData();
+          }else{
+            this.$message.error('未知错误')
+          }
+        });
+      }
     }
   }
 };

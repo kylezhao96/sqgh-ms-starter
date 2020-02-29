@@ -1,5 +1,5 @@
 <template>
-  <el-card shadow="always" v-loading="loading">
+  <el-card shadow="always" v-loading="loading" style="margin-bottom:20px">
     <!-- 弹窗 -->
     <el-dialog
       title="限电记录"
