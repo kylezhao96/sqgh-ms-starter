@@ -461,6 +461,7 @@ export default {
       this.formVisible = false;
       this.endDialogData = {};
       this.endDialogData_pre = {};
+      this.uploadDialogVisible = false
     },
     handleuploadDialogClose(){
       this.uploadDialogVisible = false
