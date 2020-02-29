@@ -29,8 +29,6 @@
       <el-table-column prop="doffp" label="下网电量"></el-table-column>
       <el-table-column prop="dcp" label="场用电量"></el-table-column>
       <el-table-column prop="dcl" label="场用电率"></el-table-column>
-      <el-table-column prop="dmaxs" label="最大风速"></el-table-column>
-      <el-table-column prop="dmins" label="最小风速"></el-table-column>
       <el-table-column prop="davgs" label="平均风速"></el-table-column>
     </el-table>
     <!--  表码值填写 -->
