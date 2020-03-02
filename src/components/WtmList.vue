@@ -1,15 +1,26 @@
 <template>
   <el-card v-loading="loading" style="margin-bottom:20px">
     <!-- 上传工作票弹窗 -->
-    <el-dialog title="上传工作票" :visible="uploadDialogVisible" width="400px" :before-close="handleuploadDialogClose">
-          <el-upload action="/api/postgzp" drag width="100%">
-            <i class="el-icon-upload"></i>
-            <div class="el-upload__text">
-              将工作票文件拖到此处，或
-              <em>点击上传</em>
-            </div>
-            <div class="el-upload__tip" slot="tip">建议每次上传一张工作票</div>
-          </el-upload>
+    <el-dialog
+      title="上传工作票"
+      :visible="uploadDialogVisible"
+      width="400px"
+      :before-close="handleuploadDialogClose"
+    >
+      <el-upload
+        action="/api/postgzp"
+        drag
+        width="100%"
+        :on-success="uploadSuccess"
+        :show-file-list="false"
+      >
+        <i class="el-icon-upload"></i>
+        <div class="el-upload__text">
+          将工作票文件拖到此处，或
+          <em>点击上传</em>
+        </div>
+        <div class="el-upload__tip" slot="tip">建议每次上传一张工作票</div>
+      </el-upload>
     </el-dialog>
     <!-- 终结弹窗 -->
     <el-dialog
@@ -20,19 +31,14 @@
     >
       <!-- form -->
       <el-form :model="endDialogData" ref="endDialogData" label-width="auto" v-if="formVisible">
-        <el-row >
-          <el-col
-            :span="endDialogItemSpan"
-            v-for="(wtm, index) in endDialogData.wtms"
-            :key="'wtm'+index"
-          >
+        <el-row>
+          <el-col :span="endDialogItemSpan" v-for="(wtm, index) in endDialogData.wtms" :key="index">
             <el-card shadow="never" body-style="padding:20px;" style="margin:10px">
               <div slot="header" class="clearfix">
                 <span>A{{wtm.wt_id}} 风机</span>
               </div>
               <el-form-item
                 label="停机时刻"
-                required="true"
                 :prop="'wtms['+index+'].stop_time'"
                 :rules="rules.stop_time"
               >
@@ -42,11 +48,11 @@
                   v-model="wtm.stop_time"
                   type="datetime"
                   placeholder="选择停机时间"
+                  @focus="formitemfocus(index)"
                 ></el-date-picker>
               </el-form-item>
               <el-form-item
                 label="启机时刻"
-                required="true"
                 :prop="'wtms['+index+'].start_time'"
                 :rules="rules.start_time"
               >
@@ -56,15 +62,15 @@
                   v-model="wtm.start_time"
                   type="datetime"
                   placeholder="选择启机时间"
+                  @focus="formitemfocus(index)"
                 ></el-date-picker>
               </el-form-item>
               <el-form-item
                 label="损失电量"
-                required="true"
                 :prop="'wtms['+index+'].lost_power'"
                 :rules="rules.lost_power"
               >
-                <el-input v-model="wtm.lost_power" style="width:auto">
+                <el-input v-model="wtm.lost_power" style="width:auto" @focus="formitemfocus(index)">
                   <template slot="append">万KWh</template>
                 </el-input>
               </el-form-item>
@@ -188,6 +194,39 @@ export default {
   name: "wtmList",
   components: {},
   data() {
+    var checkStartTime = (rule, value, callback) => {
+      if (!value) {
+        return callback();
+      } else {
+        if (!this.endDialogData.wtms[this.formIndex].stop_time) {
+          return callback(new Error("请先输入停机时间"));
+        } else if (
+          new Date(value).getTime() <=
+          new Date(this.endDialogData.wtms[this.formIndex].stop_time).getTime()
+        ) {
+          return callback(new Error("启机时间应在停机时间之后"));
+        } else {
+          return callback();
+        }
+      }
+    };
+    var checkLostPower = (rule, value, callback) => {
+      if (!value) {
+        if (this.endDialogData.wtms[this.formIndex].start_time) {
+          return callback(new Error("请输入损失电量"));
+        } else {
+          return callback();
+        }
+      } else {
+        if (!this.endDialogData.wtms[this.formIndex].stop_time) {
+          return callback(new Error("请先输入停机时间"));
+        } else if (!this.endDialogData.wtms[this.formIndex].start_time) {
+          return callback(new Error("请先输入启机时间"));
+        } else {
+          return callback();
+        }
+      }
+    };
     return {
       sdialogVisible: false,
       endDialogVisible: false,
@@ -206,33 +245,41 @@ export default {
       endDialogWidth: "1050px",
       endDialogItemSpan: "8",
       uploadDialogVisible: false,
-      formVisible: true,
-      currentActive: 0,
+      currentActive: -1,
+      formIndex: -1,
       icon: ["el-icon-help", "el-icon-help", "el-icon-help"],
       rules: {
         //表单规则校验
         start_time: [
-          { required: true, message: "请输入启机时间", trigger: "blur" },
-          { required: true, message: "请输入启机时间", trigger: "change" }
+          { validator: checkStartTime, trigger: ["blur", "change"] }
         ],
         stop_time: [
-          { required: true, message: "请输入停机时间", trigger: "blur" },
-          { required: true, message: "请输入停机时间", trigger: "change" }
+          {
+            required: true,
+            message: "请输入停机时间",
+            trigger: ["blur", "change"]
+          }
         ],
-        lost_power: [
-          { required: true, message: "请输入损失电量", trigger: "blur" },
-          { required: true, message: "请输入损失电量", trigger: "change" }
-        ]
+        lost_power: [{ validator: checkLostPower, trigger: ["blur", "change"] }]
       },
       loading: false,
       action: ""
     };
   },
-  computed: {},
+  computed: {
+    formVisible: function() {
+      if (this.currentActive >= 0) {
+        return false;
+      } else {
+        return true;
+      }
+    }
+  },
   props: [],
   mounted() {
     this.loadGzps();
   },
+
   methods: {
     loadTasks() {
       this.$http
@@ -306,7 +353,7 @@ export default {
     deleteAction(row) {
       this.icon[this.currentActive] = "el-icon-loading";
       // step1 校验+写入数据库
-      if (this.currentActive == 0) {
+      if (this.currentActive == -1) {
         this.formVisible = false;
         this.endDialogWidth = "700px";
         this.action = "删除";
@@ -333,7 +380,7 @@ export default {
             this.$message.error(err);
           });
       }
-      if (this.currentActive == 1) {
+      if (this.currentActive == 0) {
         this.$http({
           method: "post",
           url: "/api/delgzpcdf",
@@ -359,9 +406,9 @@ export default {
       if (num_wtms <= 3) {
         this.endDialogWidth = String(350 * num_wtms) + "px";
         this.endDialogItemSpan = String(24 / num_wtms);
-      }else{
-         this.endDialogWidth = '1200px';
-         this.endDialogItemSpan = '6';
+      } else {
+        this.endDialogWidth = "1200px";
+        this.endDialogItemSpan = "6";
       }
       if (row.is_end) {
         this.action = "修改";
@@ -371,79 +418,80 @@ export default {
       this.endDialogVisible = true;
       this.endDialogData = JSON.parse(JSON.stringify(row));
     },
-    // 终结弹窗提交事件
-    onEndDialogSubmit(form) {
-      this.icon[this.currentActive] = "el-icon-loading";
-      // step1 校验+写入数据库
-      if (this.currentActive == 0) {
-        this.$refs[form].validate(valid => {
-          if (valid) {
-            this.formVisible = false;
-            this.endDialogWidth = "700px";
-            this.$http({
-              method: "post",
-              url: "/api/wtmstodb",
-              data: this.endDialogData
-            }).then(() => {
-              this.currentActive++;
-              this.onEndDialogSubmit(this.endDialogData);
-            });
-          } else {
-            return false;
-          }
-        });
-      }
-      // step2 写入cdf
-      if (this.currentActive == 1) {
-        if (form.is_end) {
-          //终结修改
-          this.$http({
-            method: "post",
-            url: "/api/changecdf",
-            data: { new: form, old: this.endDialogData_pre }
-          })
-            .then(res => {
-              this.currentActive++;
-              this.init();
-              if (res["data"]) {
-                this.$message({
-                  type: "success",
-                  message: "日报表修改完成！"
-                });
-              } else {
-                this.$message({
-                  type: "warning",
-                  message: "由于未知原因日报表中未找到之前数据，请自行修改"
-                });
-              }
-            })
-            .catch(err => {
-              this.$message.error(err);
-            });
+    endData2Db() {
+      this.$http({
+        method: "post",
+        url: "/api/wtmstodb",
+        data: this.endDialogData
+      }).then(res => {
+        if (res.status == 200) {
+          this.currentActive++;
+          this.endData2Cdf(this.endDialogData);
         } else {
-          //未终结保存
-          this.$http({
-            method: "post",
-            url: "/api/wtmstocdf",
-            data: { gzp_id: form.id }
-          })
-            .then(() => {
-              this.currentActive++;
-              this.init();
+          this.init();
+          this.$message({
+            type: "success",
+            message: "写入数据库成功，未录入日报表"
+          });
+        }
+      });
+    },
+    endData2Cdf() {
+      if (this.endDialogData.is_end) {
+        //终结修改
+        this.$http({
+          method: "post",
+          url: "/api/changecdf",
+          data: { new: this.endDialogData, old: this.endDialogData_pre }
+        })
+          .then(res => {
+            this.currentActive++;
+            this.init();
+            if (res["data"]) {
               this.$message({
                 type: "success",
-                message: "风机数据录入完成！"
+                message: "日报表修改完成！"
               });
-            })
-            .catch(err => {
-              this.$message.error(err);
+            } else {
+              this.$message({
+                type: "warning",
+                message: "由于未知原因日报表中未找到之前数据，请自行修改"
+              });
+            }
+          })
+          .catch(err => {
+            this.$message.error(err);
+          });
+      } else {
+        //未终结保存
+        this.$http({
+          method: "post",
+          url: "/api/wtmstocdf",
+          data: { gzp_id: this.endDialogData.id }
+        })
+          .then(() => {
+            this.currentActive++;
+            this.init();
+            this.$message({
+              type: "success",
+              message: "风机数据录入完成！"
             });
-        }
+          })
+          .catch(err => {
+            this.$message.error(err);
+          });
       }
-      // //step3 写入当日停机停运
-      // if (this.currentActive == 2){
-
-      // }
+    },
+    // 终结弹窗提交事件
+    onEndDialogSubmit(form) {
+      this.$refs[form].validate(valid => {
+        if (valid) {
+          this.currentActive++
+          this.endData2Db();
+        } else {
+          return false;
+        }
+      });
     },
     //文件上传成功的钩子
     uploadSuccess() {
@@ -455,16 +503,14 @@ export default {
     },
     init() {
       this.loadGzps();
-      this.icon = ["el-icon-help", "el-icon-help", "el-icon-help"];
-      this.currentActive = 0;
+      this.currentActive = -1;
       this.endDialogVisible = false;
-      this.formVisible = false;
       this.endDialogData = {};
       this.endDialogData_pre = {};
-      this.uploadDialogVisible = false
+      this.uploadDialogVisible = false;
     },
-    handleuploadDialogClose(){
-      this.uploadDialogVisible = false
+    handleuploadDialogClose() {
+      this.uploadDialogVisible = false;
     },
     handleCommand(command) {
       if (command == "datasyn") {
@@ -480,14 +526,18 @@ export default {
             msg.close();
             this.$message({
               type: "success",
-              message: "数据同步成功",
+              message: "数据同步成功"
             });
             this.getData();
-          }else{
-            this.$message.error('未知错误')
+          } else {
+            this.$message.error("未知错误");
           }
         });
       }
+    },
+    //表单项点击事件
+    formitemfocus(index) {
+      this.formIndex = index;
     }
   }
 };

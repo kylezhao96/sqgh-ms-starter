@@ -529,21 +529,18 @@ export default {
     //写入日报表
     tocdf() {
       this.icon[this.currentActive] = "el-icon-loading"; //显示加载中
-      var startmsg = this.$message({
-        message: "开始写入日报表",
-        duration: 0
-      });
       this.$http({
         method: "post",
         url: "/api/toexcel",
         data: this.form
       })
         .then(() => {
+          this.loading = false
           if (this.currentActive == 1) {
             this.currentActive = 2;
             this.checkout();
           }
-          startmsg.close();
+
           this.$message({
             message: "写入日报表成功！",
             type: "success"
@@ -562,6 +559,7 @@ export default {
         url: "/api/checkout"
       })
         .then(res => {
+          this.loading = false
           if (res["data"] == true) {
             this.currentActive = 3;
             this.tooms();
@@ -621,16 +619,13 @@ export default {
     },
     handleCommand(command) {
       if (command == "datasyn") {
-        var msg = this.$message({
-          message: "开始数据同步",
-          duration: 0
-        });
+        this.loading = true
         this.$http({
           methods: "get",
           url: "/api/cdfsyn"
         }).then(res => {
           if (res.status == 200) {
-            msg.close();
+            this.loading = false
             this.$message({
               type: "success",
               message: "数据同步成功",
@@ -647,6 +642,7 @@ export default {
             message: "请先录入表码值！"
           });
         } else {
+          this.loading = true
           if (command == "tocdf") {
             this.tocdf();
           }

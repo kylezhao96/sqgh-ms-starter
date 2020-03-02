@@ -125,7 +125,6 @@ export default {
         });
       this.taskDialogVisible = false;
     },
-
     // 点击事件
     clickTask(e) {
       if (e.type == "发出力") {
