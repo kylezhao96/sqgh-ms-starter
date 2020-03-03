@@ -8,11 +8,14 @@
       :before-close="handleuploadDialogClose"
     >
       <el-upload
+        v-loading="uploadLoading"
         action="/api/postgzp"
         drag
         width="100%"
         :on-success="uploadSuccess"
         :show-file-list="false"
+        :before-upload="beforeUpload"
+        :on-error="uploadLoading = false"
       >
         <i class="el-icon-upload"></i>
         <div class="el-upload__text">
@@ -247,6 +250,7 @@ export default {
       uploadDialogVisible: false,
       currentActive: -1,
       formIndex: -1,
+      uploadLoading: false,
       icon: ["el-icon-help", "el-icon-help", "el-icon-help"],
       rules: {
         //表单规则校验
@@ -350,54 +354,53 @@ export default {
           });
         });
     },
+    deleteFromDb(row) {
+      this.$http({
+        method: "post",
+        url: "/api/delgzpdb",
+        data: row
+      })
+        .then(res => {
+          if (res.status == 200) {
+            this.currentActive++;
+            if (row.is_end) {
+              this.deleteFromCdf(row)
+            } else {
+              this.$message("日报表中无纪录！");
+              this.init();
+            }
+          } else {
+            this.$message.error("发生未知错误！");
+          }
+        })
+        .catch(err => {
+          this.$message.error(err);
+        });
+    },
+    deleteFromCdf(row) {
+      this.$http({
+        method: "post",
+        url: "/api/delgzpcdf",
+        data: row
+      })
+        .then(res => {
+          if (res.status == 200) {
+            this.$message("删除成功！");
+          } else {
+            this.$message.error("日报表中未找到该记录，请手动删除！");
+          }
+          this.init();
+        })
+        .catch(err => {
+          this.$message.error(err);
+        });
+    },
     deleteAction(row) {
-      this.icon[this.currentActive] = "el-icon-loading";
-      // step1 校验+写入数据库
-      if (this.currentActive == -1) {
-        this.formVisible = false;
-        this.endDialogWidth = "700px";
-        this.action = "删除";
-        this.endDialogVisible = true;
-        this.$http({
-          method: "post",
-          url: "/api/delgzpdb",
-          data: row
-        })
-          .then(res => {
-            if (res.status == 200) {
-              this.currentActive++;
-              if (row.is_end) {
-                this.deleteAction(row);
-              } else {
-                this.$message("日报表中无纪录！");
-                this.init();
-              }
-            } else {
-              this.$message.error("发生未知错误！");
-            }
-          })
-          .catch(err => {
-            this.$message.error(err);
-          });
-      }
-      if (this.currentActive == 0) {
-        this.$http({
-          method: "post",
-          url: "/api/delgzpcdf",
-          data: row
-        })
-          .then(res => {
-            if (res.status == 200) {
-              this.$message("删除成功！");
-            } else {
-              this.$message.error("日报表中未找到该记录，请手动删除！");
-            }
-            this.init();
-          })
-          .catch(err => {
-            this.$message.error(err);
-          });
-      }
+      this.currentActive = 0;
+      this.endDialogWidth = "700px";
+      this.action = "删除";
+      this.endDialogVisible = true;
+      this.deleteFromDb(row);
     },
     handleEnd(index, row) {
       // this.$message(index + row);
@@ -486,7 +489,7 @@ export default {
     onEndDialogSubmit(form) {
       this.$refs[form].validate(valid => {
         if (valid) {
-          this.currentActive++
+          this.currentActive++;
           this.endData2Db();
         } else {
           return false;
@@ -495,6 +498,7 @@ export default {
     },
     //文件上传成功的钩子
     uploadSuccess() {
+      this.uploadLoading = false;
       this.$message({
         type: "success",
         message: "上传成功！"
@@ -538,6 +542,9 @@ export default {
     //表单项点击事件
     formitemfocus(index) {
       this.formIndex = index;
+    },
+    beforeUpload() {
+      this.uploadLoading = true;
     }
   }
 };
