@@ -1,5 +1,5 @@
 <template>
-  <el-card id="todo-list" class="todo-card" v-loading = loading>
+  <el-card id="todo-list" class="todo-card" v-loading="loading">
     <div slot="header" class="todo-headedr">
       <!-- 用于填写出力的对话框 -->
       <status-dialog :shour="shour" :sdialogVisible="dialogVisible_1" @changeSdv="changeSdv"></status-dialog>
@@ -46,7 +46,7 @@ import statusDialog from "./StatusDialog.vue";
 export default {
   name: "dtaskList",
   components: {
-    "status-dialog": statusDialog,
+    "status-dialog": statusDialog
   },
   data() {
     return {
@@ -58,7 +58,7 @@ export default {
       taskDialogVisible: false,
       todoitems: {},
       task: {},
-      loading: false,
+      loading: false
     };
   },
   props: ["title"],
@@ -125,6 +125,7 @@ export default {
         });
       this.taskDialogVisible = false;
     },
+
     // 点击事件
     clickTask(e) {
       if (e.type == "发出力") {
@@ -132,27 +133,37 @@ export default {
         this.dialogVisible_1 = true;
       }
       if (e.name == "报送集团公司日报") {
-        this.loading = true
-        this.$message("开始执行！");
-        this.$http({
-          method:'get',
-          url:"/api/submitjtrb"
-        }).then(res=>{
-          this.loading = false
-          if(res.status == 200){
-            this.$message("填写已完成，请自行检验");
-          }else{
-            this.$message.error("发生未知错误！");
-          }
+        this.$confirm("确认报送?", "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
         })
+          .then(() => {
+            this.loading = true;
+            this.$http({
+              method: "get",
+              url: "/api/submitjtrb"
+            }).then(res => {
+              this.loading = false;
+              if (res.status == 200) {
+                this.$message("填写已完成，请自行检验");
+              } else {
+                this.$message.error("发生未知错误！");
+              }
+            });
+          })
+          .catch(() => {
+            this.$message({
+              type: "info",
+              message: "已取消删除"
+            });
+          });
       }
     },
     // sdialog发生状态改变时传值
     changeSdv(e) {
       this.dialogVisible_1 = e;
-    },
-
-    
+    }
   }
 };
 </script>
