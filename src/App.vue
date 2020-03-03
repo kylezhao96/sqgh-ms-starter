@@ -9,11 +9,11 @@
     </el-header>
     <el-main>
       <el-row :gutter="20">
-        <el-col :xs="24" :sm="8" :md="8" :lg="8" :xl="3" style='margin-bottom:20px'>
+        <el-col :xs="24" :sm="8" :md="8" :lg="8" :xl="8" style='margin-bottom:20px'>
           <dtask-list title="日常工作"></dtask-list>
           <mtask-list title="月度工作"></mtask-list>
         </el-col>
-        <el-col :xs="24" :sm="16" :md="16" :lg="16" :xl="10" style='margin-bottom:20px'>
+        <el-col :xs="24" :sm="16" :md="16" :lg="16" :xl="16" style='margin-bottom:20px'>
           <wtm-list></wtm-list>
           <pc-list></pc-list>
           <df-card></df-card>

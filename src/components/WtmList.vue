@@ -107,7 +107,7 @@
     </el-dialog>
     <!-- 展示窗口 -->
     <div slot="header" class="wtm-headedr">
-      <span>风机维护</span>
+      <span>风机工作</span>
       <el-dropdown
         split-button
         type="primary"
@@ -276,6 +276,18 @@ export default {
         return false;
       } else {
         return true;
+      }
+    },
+    icon: function() {
+      switch (this.currentActive) {
+        case -1:
+          return ["el-icon-help", "el-icon-help", "el-icon-help"];
+        case 0:
+          return ["el-icon-loding", "el-icon-help", "el-icon-help"];
+        case 1:
+          return ["el-icon-finished", "el-icon-loading", "el-icon-help"];
+        case 2:
+          return ["el-icon-finished", "el-icon-finished", "el-icon-loading"];
       }
     }
   },

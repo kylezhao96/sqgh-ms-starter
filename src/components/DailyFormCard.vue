@@ -473,7 +473,7 @@ export default {
     // 报表上报
     sendForm() {
       // 赋值
-      this.form.fka21b = 838.64;
+      this.form.fka21b = 839.79;
       // this.gform = {
       //   fka312: 2774.53,
       //   bka312: 5.44,
@@ -651,6 +651,7 @@ export default {
               methods: "get",
               url: "/api/getoms"
             }).then(res => {
+              this.loading = false
               this.omsDialogVisible = true;
               this.omsTable = res["data"];
             });
