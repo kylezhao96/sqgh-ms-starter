@@ -29,7 +29,7 @@ import dtaskList from "./components/DtaskList";
 import mtaskList from "./components/MtaskList";
 import wtmlist from "./components/WtmList";
 import pclist from "./components/PowerCutList";
-import dfcard from "./components/DailyFormCard"
+import dfcard from "./components/DailyFormCard"   
 // import TodoItem from "./components/TodoItem";
 export default {
   name: "app",

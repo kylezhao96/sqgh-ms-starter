@@ -535,7 +535,7 @@ export default {
         data: this.form
       })
         .then(() => {
-          this.loading = false
+          this.loading = false;
           if (this.currentActive == 1) {
             this.currentActive = 2;
             this.checkout();
@@ -547,8 +547,22 @@ export default {
           });
         })
         .catch(err => {
-          this.$message.error("写入日报表失败！" + err);
           this.icon[this.currentActive] = "el-icon-error";
+          if (err.response) {
+            this.$confirm("发生错误，可能由于日报表表未关闭导致", "错误", {
+              confirmButtonText: "重试",
+              calcelButtonText: "取消",
+              type: "error"
+            })
+              .then(() => {
+                this.tocdf();
+              })
+              .catch(() => {
+                this.init();
+              });
+          } else {
+            this.$message.error(err);
+          }
         });
     },
     //校验
@@ -559,7 +573,7 @@ export default {
         url: "/api/checkout"
       })
         .then(res => {
-          this.loading = false
+          this.loading = false;
           if (res["data"] == true) {
             this.currentActive = 3;
             this.tooms();
@@ -595,8 +609,22 @@ export default {
           this.toty();
         })
         .catch(err => {
-          this.$message.error(err);
           this.icon[this.currentActive] = "el-icon-error";
+          if (err.response) {
+            this.$confirm("发生错误，可能由于OMS报表未关闭导致", "错误", {
+              confirmButtonText: "重试",
+              calcelButtonText: "取消",
+              type: "error"
+            })
+              .then(() => {
+                this.tooms();
+              })
+              .catch(() => {
+                this.init();
+              });
+          } else {
+            this.$message.error(err);
+          }
         });
     },
     toty() {
@@ -604,35 +632,58 @@ export default {
       this.$http({
         methods: "get",
         url: "/api/toty"
-      }).then(res => {
-        if (res.status == 200) {
-          this.currentActive = 5;
-          this.$message({
-            message: "写入桃园日报成功",
-            type: "success"
-          });
-        }
-      });
+      })
+        .then(res => {
+          if (res.status == 200) {
+            this.currentActive = 5;
+            this.$message({
+              message: "写入桃园日报成功",
+              type: "success"
+            });
+          }
+        })
+        .catch(err => {
+          this.icon[this.currentActive] = "el-icon-error";
+          if (err.response) {
+            this.$confirm(
+              "发生错误，可能由于每日风速风量报表未关闭导致",
+              "错误",
+              {
+                confirmButtonText: "重试",
+                calcelButtonText: "取消",
+                type: "error"
+              }
+            )
+              .then(() => {
+                this.toty();
+              })
+              .catch(() => {
+                this.init();
+              });
+          } else {
+            this.$message.error(err);
+          }
+        });
     },
     shutDialog() {
       this.init();
     },
     handleCommand(command) {
       if (command == "datasyn") {
-        this.loading = true
+        this.loading = true;
         this.$http({
           methods: "get",
           url: "/api/cdfsyn"
         }).then(res => {
           if (res.status == 200) {
-            this.loading = false
+            this.loading = false;
             this.$message({
               type: "success",
-              message: "数据同步成功",
+              message: "数据同步成功"
             });
             this.getData();
-          }else{
-            this.$message.error('未知错误')
+          } else {
+            this.$message.error("未知错误");
           }
         });
       } else {
@@ -642,7 +693,7 @@ export default {
             message: "请先录入表码值！"
           });
         } else {
-          this.loading = true
+          this.loading = true;
           if (command == "tocdf") {
             this.tocdf();
           }
@@ -651,7 +702,7 @@ export default {
               methods: "get",
               url: "/api/getoms"
             }).then(res => {
-              this.loading = false
+              this.loading = false;
               this.omsDialogVisible = true;
               this.omsTable = res["data"];
             });
@@ -666,6 +717,7 @@ export default {
       this.table_2_hidden = false;
       this.icon = ["", "", "", "", "", ""];
       this.dialogCdfHidden = false;
+      this.getBmz();
     },
     shutOmsDialog() {
       this.omsDialogVisible = false;

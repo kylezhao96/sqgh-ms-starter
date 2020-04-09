@@ -159,6 +159,27 @@ export default {
             });
           });
       }
+      if(e.name == '每日停机停运报送'){
+        this.loading = true
+        this.$http({
+          method:'get',
+          url:'/api/totjty'
+        }).then(res=>{
+          this.loading = false
+          if(res.status == 200){
+            this.$message("已在桌面生成")
+          }else{
+            this.$message("石桥子风电场今日无停运")
+          }
+        }).catch(error=>{
+          this.loading = false
+          if(error.response){
+            this.$message.error(error.response.status)
+          }else{
+            this.$message.error(error.message)
+          }
+        })
+      }
     },
     // sdialog发生状态改变时传值
     changeSdv(e) {
