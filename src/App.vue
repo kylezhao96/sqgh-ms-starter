@@ -1,49 +1,37 @@
 <template>
   <el-container>
     <el-header>
-      <el-menu :span="24" :default-active="activeIndex" class="el-menu" mode="horizontal">
-        <el-menu-item index="1">我的工作台</el-menu-item>
-        <el-menu-item index="2" disabled>运行分析</el-menu-item>
-        <el-menu-item index="3" disabled>备件管理</el-menu-item>
+      <el-menu
+        :span="24"
+        :default-active="activeIndex"
+        class="el-menu"
+        mode="horizontal"
+        :router="true"
+      >
+        <el-menu-item index="1" :route="{path:'/workbench'}">我的工作台</el-menu-item>
+        <el-menu-item index="2" :route="{path:'/analysis'}">运行分析</el-menu-item>
+        <!-- <el-menu-item index="3" disabled>备件管理</el-menu-item> -->
       </el-menu>
     </el-header>
     <el-main>
-      <el-row :gutter="20">
-        <el-col :xs="24" :sm="8" :md="8" :lg="8" :xl="8" style='margin-bottom:20px'>
-          <dtask-list title="日常工作"></dtask-list>
-          <mtask-list title="月度工作"></mtask-list>
-        </el-col>
-        <el-col :xs="24" :sm="16" :md="16" :lg="16" :xl="16" style='margin-bottom:20px'>
-          <wtm-list></wtm-list>
-          <pc-list></pc-list>
-          <df-card></df-card>
-        </el-col>
-      </el-row>
+      <router-view keep-alive transition="fade" transition-mode="out-in"></router-view>
     </el-main>
     <el-footer></el-footer>
   </el-container>
 </template>
 
 <script>
-import dtaskList from "./components/DtaskList";
-import mtaskList from "./components/MtaskList";
-import wtmlist from "./components/WtmList";
-import pclist from "./components/PowerCutList";
-import dfcard from "./components/DailyFormCard"   
+// import WorkBench from "./components/WorkBench"
 // import TodoItem from "./components/TodoItem";
 export default {
   name: "app",
   data() {
     return {
-      activeIndex: "1",
+      activeIndex: "1"
     };
   },
   components: {
-    "dtask-list": dtaskList,
-    "mtask-list": mtaskList,
-    "wtm-list": wtmlist,
-    "pc-list": pclist,
-    "df-card": dfcard,
+    // "work-bench":WorkBench,
   }
 };
 </script>

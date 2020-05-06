@@ -63,21 +63,27 @@
       </el-form>
       <!-- 步骤条 -->
       <el-steps v-else :active="currentActive" simple finish-status="success">
-        <el-step :title="action+'数据库记录'" :icon="icon[0]"></el-step>
-        <el-step :title="action+'日报表记录'" :icon="icon[1]"></el-step>
+        <el-step :title="action + '数据库记录'" :icon="icon[0]"></el-step>
+        <el-step :title="action + '日报表记录'" :icon="icon[1]"></el-step>
       </el-steps>
     </el-dialog>
     <!-- 标题 -->
-    <div slot="header" class="clearfix">
+    <div slot="header" class="wtm-headedr">
       <span>限电记录</span>
-      <el-button
+      <el-dropdown
+        split-button
+        type="primary"
         style="float: right;"
         size="mini"
-        type="primary"
-        icon="el-icon-plus"
-        circle
-        @click="handleCreate()"
-      ></el-button>
+        trigger="click"
+        @command="handleCommand"
+        @click="handleCreate"
+      >
+        录入限电记录
+        <el-dropdown-menu slot="dropdown">
+          <el-dropdown-item command="datasyn">数据同步</el-dropdown-item>
+        </el-dropdown-menu>
+      </el-dropdown>
     </div>
     <!-- 主题 -->
     <el-table :data="tableData" show-summary>
@@ -143,15 +149,34 @@ export default {
       rules: {
         //表单规则校验
         start_time: [
-          { validator: checkStartTime, trigger: ["blur", "change"] }
+          {
+            validator: checkStartTime,
+            trigger: ["blur", "change"]
+          }
         ],
-        stop_time: [{ validator: checkStopTime, trigger: ["blur", "change"] }],
+        stop_time: [
+          {
+            validator: checkStopTime,
+            trigger: ["blur", "change"]
+          }
+        ],
         lost_power1: [
-          { required: true, message: "一期损失电量不能为空", trigger: "blur" },
-          { pattern: /^([0-9]{1,}[.]*[0-9]*)$/, message: "损失电量必须是数字" }
+          {
+            required: true,
+            message: "一期损失电量不能为空",
+            trigger: "blur"
+          },
+          {
+            pattern: /^([0-9]{1,}[.]*[0-9]*)$/,
+            message: "损失电量必须是数字"
+          }
         ],
         lost_power2: [
-          { required: true, message: "年龄不能为空", trigger: "blur" }
+          {
+            required: true,
+            message: "年龄不能为空",
+            trigger: "blur"
+          }
         ]
       },
       action: "创建"
@@ -191,6 +216,7 @@ export default {
         this.loading = false;
       });
     },
+    //限电记录提交
     onSubmit(form, index = 0) {
       this.currentActive = index;
       if (this.currentActive == 0) {
@@ -214,7 +240,7 @@ export default {
             data: this.form
           }).then(() => {
             this.$message("限电记录写入成功！");
-            this.init()
+            this.init();
           });
         } else {
           this.$http({
@@ -235,6 +261,25 @@ export default {
         }
       }
     },
+    handleCommand(command) {
+      //请求后台从日报表中同步数据
+      if (command == "datasyn") {
+        this.loading = true;
+        this.$http({
+          method: "get",
+          url: "/api/powercuts"
+        })
+          .then(res => {
+            if (res.status == 200) {
+              this.tableData = res["data"];
+              this.loading = false;
+            }
+          })
+          .catch(err => {
+            this.$message.error(err);
+          });
+      }
+    },
     handleEdit(index, row) {
       this.dialogVisible = true;
       this.form = JSON.parse(JSON.stringify(row));
@@ -253,26 +298,26 @@ export default {
       })
         .then(() => {
           this.dialogVisible = true;
-          this.action = '删除'
+          this.action = "删除";
           this.currentActive = 0;
           this.$http({
             method: "post",
             url: "/api/delpcdb",
             data: row
-          }).then(()=>{
-            this.currentActive =1
+          }).then(() => {
+            this.currentActive = 1;
             this.$http({
-              method:'post',
-              url:'/api/delpccdf',
-              data:row
-            }).then(res=>{
-              if (res.status == 200){
-                this.$message("删除成功")
-              }else{
-                 this.$message.error("数据库中未找到此记录，请手动删除")
+              method: "post",
+              url: "/api/delpccdf",
+              data: row
+            }).then(res => {
+              if (res.status == 200) {
+                this.$message("删除成功");
+              } else {
+                this.$message.error("数据库中未找到此记录，请手动删除");
               }
-              this.init()
-            })
+              this.init();
+            });
           });
         })
         .catch(() => {
@@ -286,14 +331,14 @@ export default {
       this.form = {};
     },
     init() {
+      this.loading = false;
       this.currentActive = -1;
       this.dialogVisible = false;
-      this.getPowerCutRecord()
-      this.form = {}
+      this.getPowerCutRecord();
+      this.form = {};
     }
   }
 };
 </script>
 
-<style>
-</style>
+<style></style>

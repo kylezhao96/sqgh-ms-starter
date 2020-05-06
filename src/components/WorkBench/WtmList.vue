@@ -170,7 +170,7 @@
               </el-form>
             </el-col>
           </el-row>
-          <el-row v-if="props.row.wtms">
+          <!-- <el-row v-if="props.row.wtms">
             <el-col v-for="wtm in props.row.wtms" :key="wtm.wt_id">
               <el-form
                 label-position="left"
@@ -192,7 +192,7 @@
                 </el-form-item>
               </el-form>
             </el-col>
-          </el-row>
+          </el-row> -->
         </template>
       </el-table-column>
       <el-table-column
@@ -621,25 +621,23 @@ export default {
     },
     handleCommand(command) {
       if (command == "datasyn") {
-        var msg = this.$message({
-          message: "开始数据同步",
-          duration: 0
-        });
+        this.loading=true
         this.$http({
           methods: "get",
           url: "/api/wtmsyn"
         }).then(res => {
           if (res.status == 200) {
-            msg.close();
+            this.loading = false
             this.$message({
               type: "success",
-              message: "数据同步成功"
+              message:  res["data"]
             });
             this.getData();
           } else {
+            this.loading = false
             this.$message.error("未知错误");
           }
-        });
+        }).catch(error => this.$message.error(error));
       }
     },
     //表单项点击事件
