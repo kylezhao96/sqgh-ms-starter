@@ -5,7 +5,8 @@ import 'element-ui/lib/theme-chalk/index.css';
 // import VueLocalStorage from 'vue-localstorage'
 import VueRouter from 'vue-router'
 import WorkBench from './components/WorkBench.vue'
-import Analysis  from './components/Analysis.vue'
+import GzpAnalysis  from './components/Analysis/GzpAnalysis.vue'
+import ScAnalysis from './components/ScAnalysis.vue'
 
 
 Vue.config.productionTip = false
@@ -28,7 +29,8 @@ axios.defaults.headers.post['Content-Type'] = 'application/json';
 const routes  = [
   {path:'/',component:WorkBench },
   {path:'/workbench', component:WorkBench},
-  {path:'/analysis', component:Analysis}
+  {path:'/gzp-analysis', component:GzpAnalysis},
+  {path:'/sc-analysis', component:ScAnalysis}
 ]   
 const router = new VueRouter({
   routes
